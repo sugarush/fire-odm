@@ -58,6 +58,10 @@ class ModelMeta(type):
         field.name = 'id'
         return field
 
+    def check_primary(cls, primary):
+        if not primary.type in (bool, int, float, str):
+            raise AttributeError('The primary key for a field must be of type: (bool, int, float, str).')
+
     def _check_primary(cls):
         primary = list(filter(lambda field: field.primary, cls._fields))
 
@@ -74,6 +78,8 @@ class ModelMeta(type):
             field.primary = True
             cls._fields.append(field)
             primary.append(field)
+
+        cls.check_primary(primary[0])
 
         cls._primary = primary[0].name
 

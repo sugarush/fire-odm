@@ -14,10 +14,6 @@ class Field(object):
 
         self.parent = None
 
-        if self.primary:
-            if not self.type in (bool, int, float, str):
-                raise AttributeError('The primary key for a field must be of type: (bool, int, float, str).')
-
     def __repr__(self):
         return '<Field name:{name}>'.format(name=self.name)
 

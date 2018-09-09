@@ -164,13 +164,11 @@ class Model(object, metaclass=ModelMeta):
                         obj[field.name] = getattr(self, field.computed)()
                     else:
                         obj[field.name] = field.computed()
-                    #obj[field.name] = field.computed()
                 else:
                     if type(field.computed) == str:
                         obj[field.name] = field.type(getattr(self, field.computed)())
                     else:
                         obj[field.name] = field.type(field.computed())
-                    #obj[field.name] = field.type(field.computed())
 
         return obj
 
