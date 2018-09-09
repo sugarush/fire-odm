@@ -12,8 +12,6 @@ class Field(object):
         self.computed_empty = computed_empty
         self.computed_type = computed_type
 
-        self.parent = None
-
     def __repr__(self):
         return '<Field name:{name}>'.format(name=self.name)
 

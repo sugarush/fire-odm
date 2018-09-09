@@ -23,7 +23,6 @@ class ModelMeta(type):
 
         for name, field in members:
 
-            field.parent = cls
             field.name = name
 
             if inspect.isclass(field.type) \
