@@ -65,6 +65,13 @@ class ModelTest(TestCase):
 
         self.assertIs(Test._get_field('test'), field)
 
+    def test_get_field_invalid(self):
+
+        class Test(Model):
+            pass
+
+        self.assertIs(Test._get_field('invalid'), None)
+
     def test_set(self):
 
         class Test(Model):
