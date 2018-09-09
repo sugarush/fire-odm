@@ -56,6 +56,15 @@ class ModelTest(TestCase):
         with self.assertRaises(Error):
             test._check_field('undefined')
 
+    def test_get_field(self):
+
+        field = Field()
+
+        class Test(Model):
+            test = field
+
+        self.assertIs(Test._get_field('test'), field)
+
     def test_set(self):
 
         class Test(Model):
