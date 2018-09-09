@@ -8,6 +8,7 @@ from . field import Field
 class Model(object, metaclass=ModelMeta):
 
     def __init__(self, dictionary=None, **kargs):
+        self._data = { }
         self.set(dictionary, **kargs)
 
     def __repr__(self):
@@ -19,15 +20,11 @@ class Model(object, metaclass=ModelMeta):
     def __getattribute__(self, name):
         attr = super(Model, self).__getattribute__(name)
         if type(attr) == Field:
-            # XXX: evaluated only if the 'name' doesn't exist in self.__dict__
-            # XXX: meaning the field is empty, so return None
-            # return self.get(name) # XXX: may be used in the future
-            return None
+            return self.get(name)
         return attr
 
     def __setattr__(self, name, value):
-        attr = super(Model, self).__getattribute__(name)
-        if type(attr) == Field:
+        if self._get_field(name):
             self._set(name, value)
         else:
             super(Model, self).__setattr__(name, value)
@@ -73,7 +70,7 @@ class Model(object, metaclass=ModelMeta):
 
     @classmethod
     def _check_field(cls, key):
-        field = list(filter(lambda field: field.name == key, cls._fields))
+        field = cls._get_field(key)
 
         if not field:
             message = '{model} does not have field: {field}'.format(
@@ -85,13 +82,20 @@ class Model(object, metaclass=ModelMeta):
                 detail = message
             )
 
-        return field[0]
+        return field
+
+    @classmethod
+    def _get_field(cls, key):
+        field = list(filter(lambda field: field.name == key, cls._fields))
+        if field:
+            return field[0]
+        return None
 
     def _set(self, key, value):
         field = self._check_field(key)
         if type(field.type) == type or inspect.isfunction(field.type) or inspect.ismethod(field.type):
             try:
-                self.__dict__[key] = field.type(value)
+                self._data[key] = field.type(value)
             except ValueError as error:
                 raise Error(
                     title = 'Type Conversion Error',
@@ -102,9 +106,9 @@ class Model(object, metaclass=ModelMeta):
                 )
         elif inspect.isclass(field.type) and issubclass(field.type, Model):
             if isinstance(value, field.type):
-                self.__dict__[key] = field.type(value.__dict__)
+                self._data[key] = field.type(value._data)
             elif isinstance(value, dict):
-                self.__dict__[key] = field.type(value)
+                self._data[key] = field.type(value)
             else:
                 raise Error(
                     title = 'Model Field Error',
@@ -133,25 +137,25 @@ class Model(object, metaclass=ModelMeta):
 
     def get(self, key, default=None):
         self._check_field(key)
-        return self.__dict__.get(key, default)
+        return self._data.get(key, default)
 
     def validate(self):
-        self._check_missing(self.__dict__)
+        self._check_missing(self._data)
         for field in self._fields:
             if inspect.isclass(field.type) and issubclass(field.type, Model):
                 # XXX: check if nested models have required fields.
-                model = self.__dict__.get(field.name, field.type())
+                model = self._data.get(field.name, field.type())
                 model.validate()
 
     def serialize(self, validate=False, compute=False):
         if validate:
             self.validate()
 
-        obj = self.__dict__.copy()
+        obj = self._data.copy()
 
         for field in self._fields:
             if inspect.isclass(field.type) and issubclass(field.type, Model):
-                model = self.__dict__.get(field.name, field.type())
+                model = self._data.get(field.name, field.type())
                 # no need to pass validate to serialize here,
                 # the call to self.validate() above is recursive
                 data = model.serialize(compute=compute)
