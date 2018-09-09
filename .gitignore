@@ -1,0 +1,8 @@
+venv
+*.pyc
+.DS_Store
+__pycache__
+.coverage
+rethinkdb_data
+rethinkdb
+htmlcov
