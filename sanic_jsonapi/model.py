@@ -102,36 +102,17 @@ class Model(object, metaclass=ModelMeta):
                 )
         elif inspect.isclass(field.type) and issubclass(field.type, Model):
             if isinstance(value, field.type):
-                try:
-                    self.__dict__[key] = field.type(value.__dict__)
-                except ValueError as error:
-                    raise Error(
-                        title = 'Type Conversion Error',
-                        detail = '{value_type} cannot be converted to {destination_type}'.format(
-                            value_type = value.__class__.__name__,
-                            destination_type = field.type.__name__
-                        )
-                    )
+                self.__dict__[key] = field.type(value.__dict__)
             elif isinstance(value, dict):
-                try:
-                    self.__dict__[key] = field.type(value)
-                except ValueError as error:
-                    raise Error(
-                        title = 'Type Conversion Error',
-                        detail = '{value_type} cannot be converted to {destination_type}'.format(
-                            value_type = value.__class__.__name__,
-                            destination_type = field.type.__name__
-                        )
-                    )
+                self.__dict__[key] = field.type(value)
             else:
-                message = '{model}\'s field "{field}" must be set with a dict or {type} object.'.format(
-                    model=self.__class__.__name__,
-                    field=field.name,
-                    type=field.type.__name__
-                )
                 raise Error(
                     title = 'Model Field Error',
-                    detail = message
+                    detail = '{model}\'s field "{field}" must be set with a dict or {type} object.'.format(
+                        model=self.__class__.__name__,
+                        field=field.name,
+                        type=field.type.__name__
+                    )
                 )
         else:
             raise Error(
@@ -171,11 +152,13 @@ class Model(object, metaclass=ModelMeta):
         for field in self._fields:
             if inspect.isclass(field.type) and issubclass(field.type, Model):
                 model = self.__dict__.get(field.name, field.type())
+                # no need to pass validate to serialize here,
+                # the call to self.validate() above is recursive
                 data = model.serialize(compute=compute)
                 if data: obj[field.name] = data
             elif compute and field.computed:
                 if field.computed_empty and obj.get(field.name):
-                    del obj[field.name]
+                    continue
                 elif field.computed_type:
                     if type(field.computed) == str:
                         obj[field.name] = getattr(self, field.computed)()

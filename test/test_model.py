@@ -66,6 +66,16 @@ class ModelTest(TestCase):
 
         self.assertIs(test.field, 'value')
 
+    def test_set_invalid(self):
+
+        class Test(Model):
+            field = Field(type=dict)
+
+        test = Test()
+
+        with self.assertRaises(Error):
+            test._set('field', 'invalid')
+
     def test_set_undefined(self):
 
         class Test(Model):
@@ -100,6 +110,19 @@ class ModelTest(TestCase):
         alpha._set('beta', Beta({ 'field': 'value' }))
 
         self.assertIs(alpha.beta.field, 'value')
+
+    def test_set_nested_model_invalid(self):
+
+        class Beta(Model):
+            field = Field()
+
+        class Alpha(Model):
+            beta = Field(type=Beta)
+
+        alpha = Alpha()
+
+        with self.assertRaises(Error):
+            alpha._set('beta', 'test')
 
     def test_set_multiple_nested(self):
 
@@ -245,6 +268,16 @@ class ModelTest(TestCase):
 
         self.assertEqual(test.serialize(), expected)
 
+    def test_serialize_validate(self):
+
+        class Test(Model):
+            field = Field(required=True)
+
+        test = Test()
+
+        with self.assertRaises(Error):
+            test.serialize(validate=True)
+
     def test_serialize_nested_model(self):
 
         expected = {'beta': {'value': 'test'}}
@@ -293,9 +326,18 @@ class ModelTest(TestCase):
 
         test.computed = 'value'
 
-        self.assertIs(test.serialize()['computed'], 'value')
+        self.assertIs(test.serialize(compute=True)['computed'], 'value')
 
-    def test_serialize_computed_type(self):
+    def test_serialize_computed_type_function(self):
+
+        class Test(Model):
+            computed = Field(type=dict, computed=lambda: 'hello', computed_type=True)
+
+        test = Test()
+
+        self.assertIs(test.serialize(compute=True)['computed'], 'hello')
+
+    def test_serialize_computed_type_method(self):
 
         class Test(Model):
             computed = Field(type=dict, computed='get_hello', computed_type=True)
@@ -304,8 +346,5 @@ class ModelTest(TestCase):
                 return 'hello'
 
         test = Test()
-
-        with self.assertRaises(Error):
-            test.computed = 'value'
 
         self.assertIs(test.serialize(compute=True)['computed'], 'hello')
