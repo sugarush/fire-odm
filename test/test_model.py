@@ -1,6 +1,7 @@
 from unittest import TestCase
 
 from sanic_jsonapi import Model, Field, Error
+from sanic_jsonapi.controller.list import ListController
 
 
 class ModelTest(TestCase):
@@ -78,7 +79,7 @@ class ModelTest(TestCase):
             field = Field()
 
         test = Test()
-        test._set('field', 'value')
+        test.set('field', 'value')
 
         self.assertIs(test.field, 'value')
 
@@ -90,7 +91,7 @@ class ModelTest(TestCase):
         test = Test()
 
         with self.assertRaises(Error):
-            test._set('field', 'invalid')
+            test.set('field', 'invalid')
 
     def test_set_undefined(self):
 
@@ -100,7 +101,7 @@ class ModelTest(TestCase):
         test = Test()
 
         with self.assertRaises(Error):
-            test._set('field', 'value')
+            test.set('field', 'value')
 
     def test_set_nested_model_from_dict(self):
 
@@ -111,7 +112,7 @@ class ModelTest(TestCase):
             beta = Field(type=Beta)
 
         alpha = Alpha()
-        alpha._set('beta', { 'field': 'value' })
+        alpha.set('beta', { 'field': 'value' })
 
         self.assertIs(alpha.beta.field, 'value')
 
@@ -123,7 +124,7 @@ class ModelTest(TestCase):
             beta = Field(type=Beta)
 
         alpha = Alpha()
-        alpha._set('beta', Beta({ 'field': 'value' }))
+        alpha.set('beta', Beta({ 'field': 'value' }))
 
         self.assertIs(alpha.beta.field, 'value')
 
@@ -138,7 +139,7 @@ class ModelTest(TestCase):
         alpha = Alpha()
 
         with self.assertRaises(Error):
-            alpha._set('beta', 'test')
+            alpha.set('beta', 'test')
 
     def test_set_multiple_nested(self):
 
@@ -152,38 +153,38 @@ class ModelTest(TestCase):
             beta = Field(type=Beta)
 
         alpha = Alpha()
-        alpha._set('beta', { 'gamma': { 'field': 'value' } })
+        alpha.set('beta', { 'gamma': { 'field': 'value' } })
 
         self.assertIs(alpha.beta.gamma.field, 'value')
 
-    def test_set_keyword(self):
+    def test_update_keyword(self):
 
         class Test(Model):
             field = Field()
 
         test = Test()
-        test.set(field='value')
+        test.update(field='value')
 
         self.assertIs(test.field, 'value')
 
-    def test_set_dictionary(self):
+    def test_update_dictionary(self):
 
         class Test(Model):
             field = Field()
 
         test = Test()
-        test.set({ 'field': 'value' })
+        test.update({ 'field': 'value' })
 
         self.assertIs(test.field, 'value')
 
-    def test_set_dictionary_and_keyword(self):
+    def test_update_dictionary_and_keyword(self):
 
         class Test(Model):
             alpha = Field()
             beta = Field()
 
         test = Test()
-        test.set({ 'alpha': 'a', 'beta': 'b' }, beta='value')
+        test.update({ 'alpha': 'a', 'beta': 'b' }, beta='value')
 
         self.assertIs(test.alpha, 'a')
         self.assertIs(test.beta, 'value')
@@ -315,7 +316,7 @@ class ModelTest(TestCase):
             computed = Field(type=str, computed=lambda: 'value')
 
         test = Test()
-        self.assertIs(test.serialize(compute=True)['computed'], 'value')
+        self.assertIs(test.serialize(computed=True)['computed'], 'value')
 
     def test_serialize_computed_method(self):
 
@@ -326,7 +327,7 @@ class ModelTest(TestCase):
                 return 'hello'
 
         test = Test()
-        self.assertIs(test.serialize(compute=True)['computed'], 'hello')
+        self.assertIs(test.serialize(computed=True)['computed'], 'hello')
 
     def test_serialize_computed_empty(self):
 
@@ -338,11 +339,11 @@ class ModelTest(TestCase):
 
         test = Test()
 
-        self.assertIs(test.serialize(compute=True)['computed'], 'hello')
+        self.assertIs(test.serialize(computed=True)['computed'], 'hello')
 
         test.computed = 'value'
 
-        self.assertIs(test.serialize(compute=True)['computed'], 'value')
+        self.assertIs(test.serialize(computed=True)['computed'], 'value')
 
     def test_serialize_computed_type_function(self):
 
@@ -351,7 +352,7 @@ class ModelTest(TestCase):
 
         test = Test()
 
-        self.assertIs(test.serialize(compute=True)['computed'], 'hello')
+        self.assertIs(test.serialize(computed=True)['computed'], 'hello')
 
     def test_serialize_computed_type_method(self):
 
@@ -363,4 +364,169 @@ class ModelTest(TestCase):
 
         test = Test()
 
-        self.assertIs(test.serialize(compute=True)['computed'], 'hello')
+        self.assertIs(test.serialize(computed=True)['computed'], 'hello')
+
+    def test_serialize_controller(self):
+
+        class Test(Model):
+            field = Field(type=list)
+
+        test = Test(field=[ 1, 2, 3 ])
+
+        self.assertEqual(test.serialize(controllers=True)['field'], [ 1, 2, 3 ])
+
+    def test_serialize_controller_nested(self):
+
+        class Beta(Model):
+            field = Field(type=list)
+
+        class Alpha(Model):
+            beta = Field(type=Beta)
+
+        alpha = Alpha({ 'beta': { 'field': [ 1, 2, 3 ] } })
+
+        self.assertEqual(
+            alpha.serialize(controllers=True)['beta']['field'],
+            [ 1, 2, 3 ]
+        )
+
+    def test_serialize_controller_reset(self):
+
+        class Test(Model):
+            field = Field(type=list)
+
+        test = Test(field=[ 1, 2, 3 ])
+
+        test.field.append(4)
+
+        self.assertEqual(
+            test.serialize(controllers=True, reset=True)['field'],
+            [ 1, 2, 3, 4]
+        )
+        self.assertEqual(test.serialize(controllers=True)['field'], [ 1, 2, 3 ])
+
+
+    def test_serialize_controller_nested_reset(self):
+
+        class Beta(Model):
+            field = Field(type=list)
+
+        class Alpha(Model):
+            beta = Field(type=Beta)
+
+        alpha = Alpha({ 'beta': { 'field': [ 1, 2, 3 ] } })
+
+        alpha.beta.field.append(4)
+
+        self.assertEqual(
+            alpha.serialize(controllers=True, reset=True)['beta']['field'],
+            [ 1, 2, 3, 4 ]
+        )
+        self.assertEqual(
+            alpha.serialize(controllers=True)['beta']['field'],
+            [ 1, 2, 3 ]
+        )
+
+    def test_controllers_list_create(self):
+
+        class Test(Model):
+            field = Field(type=list)
+
+        test = Test()
+
+        self.assertTrue(test._controllers.get('field'))
+
+    def test_controller_get_controller(self):
+
+        class Test(Model):
+            field = Field(type=list)
+
+        test = Test()
+
+        self.assertTrue(test._get_controller('field'))
+
+    def test_controller_get(self):
+
+        class Test(Model):
+            field = Field(type=list)
+
+        test = Test()
+
+        self.assertIsInstance(test.get('field'), ListController)
+
+    def test_controller_get_direct(self):
+
+        class Test(Model):
+            field = Field(type=list)
+
+        test = Test()
+
+        self.assertNotIsInstance(test.get('field', direct=True), ListController)
+        self.assertNotIsInstance(test.get_direct('field'), ListController)
+
+    def test_controller_set(self):
+
+        class Test(Model):
+            field = Field(type=list)
+
+        test = Test()
+
+        test.set('field', [ 1, 2, 3])
+
+        self.assertEqual(test.get('field').data, [ 1, 2, 3 ])
+        self.assertEqual(test.get_direct('field'), None)
+
+    def test_controller_set_direct(self):
+
+        class Test(Model):
+            field = Field(type=list)
+
+        test = Test()
+
+        test.set_direct('field', [ 1, 2, 3])
+
+        self.assertEqual(test.get('field').data, [ 1, 2, 3 ])
+        self.assertEqual(test.get_direct('field'), [ 1, 2, 3 ])
+
+    def test_controller_set_invalid(self):
+
+        class Test(Model):
+            field = Field(type=[ str ])
+
+        test = Test()
+
+        with self.assertRaises(Error):
+            test.set('field', [ 1, 2, 3 ])
+
+    def test_controller_set_direct_invalid(self):
+
+        class Test(Model):
+            field = Field(type=[ str ])
+
+        test = Test()
+
+        with self.assertRaises(Error):
+            test.set_direct('field', [ 1, 2, 3 ])
+
+    def test_operations(self):
+
+        class Test(Model):
+            field = Field(type=list)
+
+        test = Test()
+        test.field.append(1)
+
+        self.assertDictEqual(test.operations(), { 'field': { 'list:append': [ 1 ] } })
+
+    def test_operations_nested(self):
+
+        class Beta(Model):
+            field = Field(type=list)
+
+        class Alpha(Model):
+            beta = Field(type=Beta)
+
+        alpha = Alpha(beta={ })
+        alpha.beta.field.append(1)
+
+        self.assertDictEqual(alpha.operations(), { 'beta': { 'field': { 'list:append': [ 1 ] } } } )
