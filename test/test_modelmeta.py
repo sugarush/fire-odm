@@ -137,7 +137,9 @@ class ModelMetaTest(TestCase):
             def method(self):
                 pass
 
-        field = Field(computed=Beta.method)
+        beta = Beta()
+
+        field = Field(computed=beta.method)
 
         class Alpha(metaclass=ModelMeta):
             test = field
