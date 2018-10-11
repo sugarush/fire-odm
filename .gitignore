@@ -3,6 +3,7 @@ venv
 .DS_Store
 __pycache__
 .coverage
+mongodb_data
 rethinkdb_data
 rethinkdb
 htmlcov
