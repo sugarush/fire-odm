@@ -19,7 +19,7 @@ class ModelMeta(type):
         cls._computed = [ ]
         cls._dynamic = [ ]
 
-        members = inspect.getmembers(cls, lambda f: isinstance(f, Field))
+        members = inspect.getmembers(cls, lambda item: isinstance(item, Field))
 
         for name, field in members:
 
