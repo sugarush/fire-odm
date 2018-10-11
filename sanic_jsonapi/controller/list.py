@@ -65,23 +65,23 @@ class ListController(OperationController):
         data = { }
 
         if self.to_empty:
-            data['list:empty'] = self.to_empty
+            data['$:list:empty'] = self.to_empty
             if reset: self.reset()
             return data
 
         if self.to_replace:
-            data['list:replace'] = self.data.copy()
+            data['$:list:replace'] = self.data.copy()
             if reset: self.reset()
             return data
 
         if self.to_append:
-            data['list:append'] = self.to_append.copy()
+            data['$:list:append'] = self.to_append.copy()
 
         if self.to_remove:
-            data['list:remove'] = self.to_remove.copy()
+            data['$:list:remove'] = self.to_remove.copy()
 
         if self.to_remove_all:
-            data['list:remove_all'] = self.to_remove_all.copy()
+            data['$:list:remove_all'] = self.to_remove_all.copy()
 
         if reset:
             self.reset()

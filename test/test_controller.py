@@ -223,7 +223,7 @@ class TestListController(TestCase):
         test = Test()
         test.field.empty()
 
-        self.assertDictEqual(test.field.operations(), { 'list:empty': True })
+        self.assertDictEqual(test.field.operations(), { '$:list:empty': True })
 
     def test_operation_replace(self):
 
@@ -233,7 +233,7 @@ class TestListController(TestCase):
         test = Test(field=[ 1, 2, 3 ])
         test.field = [ 3, 4, 5 ]
 
-        self.assertDictEqual(test.field.operations(), { 'list:replace': [ 3, 4, 5 ] })
+        self.assertDictEqual(test.field.operations(), { '$:list:replace': [ 3, 4, 5 ] })
 
     def test_operation_append(self):
 
@@ -243,7 +243,7 @@ class TestListController(TestCase):
         test = Test()
         test.field.append(4)
 
-        self.assertDictEqual(test.field.operations(), { 'list:append': [ 4 ] })
+        self.assertDictEqual(test.field.operations(), { '$:list:append': [ 4 ] })
 
     def test_operation_remove(self):
 
@@ -253,7 +253,7 @@ class TestListController(TestCase):
         test = Test()
         test.field.remove(1)
 
-        self.assertDictEqual(test.field.operations(), { 'list:remove': [ 1 ] })
+        self.assertDictEqual(test.field.operations(), { '$:list:remove': [ 1 ] })
 
     def test_operation_remove_all(self):
 
@@ -263,4 +263,4 @@ class TestListController(TestCase):
         test = Test()
         test.field.remove_all(1)
 
-        self.assertDictEqual(test.field.operations(), { 'list:remove_all': [ 1 ] })
+        self.assertDictEqual(test.field.operations(), { '$:list:remove_all': [ 1 ] })
