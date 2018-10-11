@@ -516,7 +516,7 @@ class ModelTest(TestCase):
         test = Test()
         test.field.append(1)
 
-        self.assertDictEqual(test.operations(), { 'field': { 'list:append': [ 1 ] } })
+        self.assertDictEqual(test.operations(), { 'field': { '$:list:append': [ 1 ] } })
 
     def test_operations_nested(self):
 
@@ -529,4 +529,4 @@ class ModelTest(TestCase):
         alpha = Alpha(beta={ })
         alpha.beta.field.append(1)
 
-        self.assertDictEqual(alpha.operations(), { 'beta': { 'field': { 'list:append': [ 1 ] } } } )
+        self.assertDictEqual(alpha.operations(), { 'beta': { 'field': { '$:list:append': [ 1 ] } } } )
