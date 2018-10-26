@@ -2,24 +2,21 @@ import json
 
 import rethinkdb as r
 
-from . model import Model, Error
-from . jsonapi import jsonapi, JSONAPIMixin, Empty
+from .. util import serialize
+from .. model import Model, Field, Error
+from .. jsonapi import jsonapi, JSONAPIMixin, Empty
 
 
 r.set_loop_type('asyncio')
 
 
-class Connection(object):
+class RethinkDB(object):
 
     connections = { }
 
     @classmethod
-    def _hash(cls, kargs):
-        return json.dumps(kargs, separators=(',', ':'), sort_keys=True)
-
-    @classmethod
     async def connect(cls, **kargs):
-        key = cls._hash(kargs)
+        key = serialize(kargs)
 
         connection = cls.connections.get(key)
         if connection and connection.is_open():
@@ -49,9 +46,21 @@ class RethinkDBModel(Model, JSONAPIMixin):
     _ensure = True
 
     @classmethod
+    def default_primary(self):
+        field = Field()
+        field.name = 'id'
+        field.primary = True
+        return field
+
+    @classmethod
+    def check_primary(cls, field):
+        if not field.type in (bool, int, float, str):
+            raise AttributeError('The primary key for a field must be of type: (bool, int, float, str).')
+
+    @classmethod
     async def connect(cls):
         if not cls.connection or not cls.connection.is_open():
-            cls.connection = await Connection.connect(**cls.db_options)
+            cls.connection = await RethinkDB.connect(**cls.db_options)
 
         if cls._ensure:
             await cls._ensure_database()
@@ -347,7 +356,8 @@ class RethinkDBModel(Model, JSONAPIMixin):
 
         if self.id and await self.exists(self.id):
 
-            data = self.serialize(compute=True)
+            data = self.serialize(computed=True)
+            operations = self.operations(reset=True)
 
             result = await self.r.get(self.id)\
                 .update(data, return_changes=True)\
@@ -357,7 +367,7 @@ class RethinkDBModel(Model, JSONAPIMixin):
             # XXX: check for errors in result
             changes = result['changes'][0]['new_val']
 
-            self.set(changes)
+            self.update_direct(changes)
 
         else:
 
@@ -366,7 +376,7 @@ class RethinkDBModel(Model, JSONAPIMixin):
             except Error as error:
                 return error
 
-            data = self.serialize(compute=True)
+            data = self.serialize(computed=True, controllers=True, reset=True)
 
             result = await self.r\
                 .insert(data, return_changes=True)\
@@ -374,7 +384,7 @@ class RethinkDBModel(Model, JSONAPIMixin):
 
             changes = result['changes'][0]['new_val']
 
-            self.set(changes)
+            self.update_direct(changes)
 
         return None
 

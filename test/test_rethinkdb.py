@@ -1,43 +1,37 @@
+from unittest import skip
+
 import rethinkdb as r
 
-from sanic_jsonapi import AsyncTestCase, Field
-from sanic_jsonapi.rethinkdb import RethinkDBModel, Connection
+from sanic_jsonapi import AsyncTestCase, Field, Error
+from sanic_jsonapi.backend.rethinkdb import RethinkDBModel, RethinkDB
 
 
-class DatabaseTest(AsyncTestCase):
-
-    def test_hash(self):
-        expected = '{"a":"a","b":{"d":"d","e":"e"},"c":"c"}'
-        result = Connection._hash({
-            'c': 'c',
-            'a': 'a',
-            'b': { 'e': 'e', 'd': 'd' }
-        })
-        self.assertEqual(expected, result)
+class RethinkDBConnectionTest(AsyncTestCase):
 
     async def test_connect(self):
-        c = await Connection.connect(db='test') #ssl={'cacerts': ''})
+        c = await RethinkDB.connect(db='test') #ssl={'cacerts': ''})
         self.assertTrue(c.is_open())
-        await Connection.close()
+        await RethinkDB.close()
 
     async def test_connect_multiple(self):
-        a = await Connection.connect(db='test')
-        b = await Connection.connect(db='test')
-        c = await Connection.connect(db='testing')
+        a = await RethinkDB.connect(db='test')
+        b = await RethinkDB.connect(db='test')
+        c = await RethinkDB.connect(db='testing')
         self.assertIs(a, b)
         self.assertIsNot(a, c)
-        await Connection.close()
+        await RethinkDB.close()
 
     async def test_close(self):
-        a = await Connection.connect(db='test')
-        b = await Connection.connect(db='testing')
-        await Connection.close()
+        a = await RethinkDB.connect(db='test')
+        b = await RethinkDB.connect(db='testing')
+        await RethinkDB.close()
         self.assertFalse(a.is_open())
         self.assertFalse(b.is_open())
 
 
 class RethinkDBModelTest(AsyncTestCase):
 
+    @skip
     async def test_connect_and_close(self):
 
         class Test(RethinkDBModel):
@@ -58,6 +52,7 @@ class RethinkDBModelTest(AsyncTestCase):
 
         self.assertFalse(Test.connection.is_open())
 
+    @skip
     async def test_ensure_database(self):
 
         class Test(RethinkDBModel):
@@ -73,6 +68,7 @@ class RethinkDBModelTest(AsyncTestCase):
         await r.db_drop('testdb').run(Test.connection)
         await Test.close()
 
+    @skip
     async def test_ensure_table(self):
 
         class Test(RethinkDBModel):
@@ -87,6 +83,7 @@ class RethinkDBModelTest(AsyncTestCase):
         await Test.drop()
         await Test.close()
 
+    @skip
     async def test_ensure_indexes(self):
 
         class Beta(RethinkDBModel):
@@ -96,27 +93,67 @@ class RethinkDBModelTest(AsyncTestCase):
             beta = Field(type=Beta)
             field = Field(indexed=True)
 
-    async def test_save(self):
+    async def test_save_new(self):
 
-        from datetime import datetime
+        class Test(RethinkDBModel):
+            pass
 
-        class Beta(RethinkDBModel):
-            timestamp = Field(computed='get_timestamp')
+        await Test.drop()
 
-            def get_timestamp(self):
-                return datetime.utcnow().timestamp()
+        test = Test()
 
-        class Alpha(RethinkDBModel):
-            name = Field()
-            beta = Field(type=Beta)
+        self.assertFalse(test.id)
 
-        await Alpha.drop()
+        error = await test.save()
 
-        alpha = Alpha()
+        self.assertEqual(error, None)
 
-        await alpha.save()
-        print(alpha.id, alpha.beta.timestamp)
+        self.assertTrue(test.id)
 
+        await Test.drop()
+        await Test.close()
+
+    async def test_save_existing(self):
+
+        class Test(RethinkDBModel):
+            field = Field()
+
+        await Test.drop()
+
+        test = Test({ 'field': 'value' })
+
+        error = await test.save()
+
+        self.assertEqual(error, None)
+
+        test.field = 'new_value'
+
+        error = await test.save()
+
+        self.assertEqual(error, None)
+
+        self.assertEqual(test.field, 'new_value')
+
+        await Test.drop()
+        await Test.close()
+
+    async def test_save_invalid(self):
+
+        class Test(RethinkDBModel):
+            field = Field(required=True)
+
+        await Test.drop()
+
+        test = Test()
+
+        error = await test.save()
+
+        self.assertIsInstance(error, Error)
+
+        await Test.drop()
+        await Test.close()
+
+    @skip
     async def test_add_with_primary_key_default(self):
 
         class Test(RethinkDBModel):
@@ -132,6 +169,7 @@ class RethinkDBModelTest(AsyncTestCase):
         await Test.drop()
         await Test.close()
 
+    @skip
     async def test_add_with_primary_key_custom(self):
 
         class Test(RethinkDBModel):
@@ -147,6 +185,7 @@ class RethinkDBModelTest(AsyncTestCase):
         await Test.drop()
         await Test.close()
 
+    @skip
     async def test_add_multiple(self):
 
         class Test(RethinkDBModel):
@@ -171,5 +210,8 @@ class RethinkDBModelTest(AsyncTestCase):
         await Test.drop()
         await Test.close()
 
+    @skip
     async def test_add_duplicate_primary(self):
-        pass
+
+        class Test(RethinkDBModel):
+            field = Field()

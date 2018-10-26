@@ -55,6 +55,7 @@ class ModelMeta(type):
     def default_primary(cls):
         field = Field()
         field.name = 'id'
+        field.primary = True
         return field
 
     def check_primary(cls, primary):
@@ -74,7 +75,6 @@ class ModelMeta(type):
 
         if not primary:
             field = cls.default_primary()
-            field.primary = True
             cls._fields.append(field)
             primary.append(field)
 
