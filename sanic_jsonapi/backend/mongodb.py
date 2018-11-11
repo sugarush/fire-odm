@@ -1,3 +1,4 @@
+import inflection
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorClient
 
@@ -23,6 +24,32 @@ class MongoDB(object):
 
 
 class MongoDBModel(Model):
+
+    connection_options = { }
+    connection = None
+
+    database_options = { }
+    database = None
+
+    collection_options = { }
+    collection = None
+
+    @classmethod
+    def initialize(cls):
+        if cls.__name__ == 'MongoDBModel':
+            return
+
+        cls.connection = MongoDB.connect(**cls.connection_options)
+
+        if not cls.database_options.get('name'):
+            cls.database_options['name'] = 'test'
+
+        cls.database = cls.connection.get_database(**cls.database_options)
+
+        if not cls.collection_options.get('name'):
+            cls.collection_options['name'] = cls._table
+
+        cls.collection = cls.database.get_collection(**cls.collection_options)
 
     @classmethod
     def default_primary(cls):
