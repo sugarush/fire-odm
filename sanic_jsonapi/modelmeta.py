@@ -51,6 +51,10 @@ class ModelMeta(type):
         cls._check_primary()
         cls._check_computed()
         cls._check_dynamic()
+        cls.initialize()
+
+    def initialize(cls):
+        pass
 
     def default_primary(cls):
         field = Field()
