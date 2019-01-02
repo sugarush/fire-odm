@@ -3,7 +3,7 @@ from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from .. util import serialize
-from .. model import Model, Field
+from .. model import Model, Field, Error
 
 
 class MongoDB(object):
@@ -68,7 +68,7 @@ class MongoDBModel(Model):
             raise AttributeError('MongoDBModel primary key type must be: ObjectId')
 
     @classmethod
-    async def exists(cls, id):
+    async def find(cls, query={ }, projection={ }):
         raise NotImplementedError()
 
     @classmethod
@@ -76,7 +76,7 @@ class MongoDBModel(Model):
         raise NotImplementedError()
 
     @classmethod
-    async def find(cls, query={ }):
+    async def exists(cls, id):
         raise NotImplementedError()
 
     @classmethod
@@ -84,7 +84,13 @@ class MongoDBModel(Model):
         raise NotImplementedError()
 
     async def save(self):
-        raise NotImplementedError()
+        try:
+            self.validate()
+        except Error as error:
+            return error
+
+        data = self.serialize(computed=True, controllers=True, reset=True)
+        result = await self.collection.insert_one(data)
 
     async def load(self):
         raise NotImplementedError()
