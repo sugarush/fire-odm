@@ -3,6 +3,7 @@ import inspect
 
 from . modelmeta import ModelMeta
 from . field import Field
+
 from . controller.list import ListController
 
 
@@ -31,6 +32,12 @@ class Model(object, metaclass=ModelMeta):
             self.set(name, value)
         else:
             super(Model, self).__setattr__(name, value)
+
+    def __getitem__(self, name):
+        pass
+
+    def __setitem__(self, name, value):
+        pass
 
     @property
     def id(self):
@@ -105,6 +112,8 @@ class Model(object, metaclass=ModelMeta):
     def set(self, key, value, direct=False):
         field = self._check_field(key)
         controller = self._get_controller(field.name)
+
+        # field has a controller
         if controller:
             try:
                 if direct:
@@ -118,6 +127,16 @@ class Model(object, metaclass=ModelMeta):
                     title = 'Type Conversion Error',
                     detail = str(error)
                 )
+        # field's type is a string for a method on this object
+        elif isinstance(field.type, str):
+            try:
+                self._data[key] = getattr(self, field.type)(value)
+            except Exception as error:
+                raise Error(
+                    title = 'Type Conversion Error',
+                    detail = str(error)
+                )
+        # field's type is a type, method or function
         elif type(field.type) == type \
             or inspect.isfunction(field.type) \
             or inspect.ismethod(field.type):
@@ -128,6 +147,7 @@ class Model(object, metaclass=ModelMeta):
                     title = 'Type Conversion Error',
                     detail = str(error)
                 )
+        # field's type is a nested model
         elif inspect.isclass(field.type) \
             and issubclass(field.type, Model):
             if isinstance(value, field.type):
@@ -187,17 +207,15 @@ class Model(object, metaclass=ModelMeta):
 
     def validate(self):
         self._check_missing(self._data)
+
         for field in self._fields:
             if inspect.isclass(field.type) \
                 and issubclass(field.type, Model):
-                # XXX: verify that nested models have required fields
+                # verify that nested models have required fields
                 model = self._data.get(field.name, field.type())
                 model.validate()
 
-    def serialize(self, validate=False, computed=False, controllers=False, reset=False):
-        if validate:
-            self.validate()
-
+    def serialize(self, computed=False, controllers=False, reset=False):
         obj = self._data.copy()
 
         for field in self._fields:
@@ -207,8 +225,6 @@ class Model(object, metaclass=ModelMeta):
             elif inspect.isclass(field.type) \
                 and issubclass(field.type, Model):
                 model = self.get_direct(field.name, field.type())
-                # XXX: no need to pass validate to serialize here,
-                # XXX: the call to self.validate() above is recursive
                 data = model.serialize(
                     computed=computed,
                     controllers=controllers,
@@ -218,7 +234,7 @@ class Model(object, metaclass=ModelMeta):
             elif computed and field.computed:
                 if field.computed_empty \
                     and obj.get(field.name):
-                    # XXX: skip fields that should only be computed when empty
+                    # skip fields that should only be computed when empty
                     continue
                 elif field.computed_type:
                     if type(field.computed) == str:

@@ -157,6 +157,33 @@ class ModelTest(TestCase):
 
         self.assertIs(alpha.beta.gamma.field, 'value')
 
+    def test_set_dynamic(self):
+
+        class Test(Model):
+            field = Field(type='convert')
+
+            def convert(self, value):
+                return int(value)
+
+        test = Test()
+
+        test.set('field', '10')
+
+        self.assertEqual(test.get('field'), 10)
+
+    def test_set_dynamic_invalid(self):
+
+        class Test(Model):
+            field = Field(type='convert')
+
+            def convert(self, value):
+                return int(value)
+
+        test = Test()
+
+        with self.assertRaises(Error):
+            test.set('field', 'hello')
+
     def test_update_keyword(self):
 
         class Test(Model):
@@ -284,16 +311,6 @@ class ModelTest(TestCase):
         test.object = { 'alpha': 'a', 'beta': 'b' }
 
         self.assertEqual(test.serialize(), expected)
-
-    def test_serialize_validate(self):
-
-        class Test(Model):
-            field = Field(required=True)
-
-        test = Test()
-
-        with self.assertRaises(Error):
-            test.serialize(validate=True)
 
     def test_serialize_nested_model(self):
 
