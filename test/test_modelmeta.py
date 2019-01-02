@@ -102,6 +102,13 @@ class ModelMetaTest(TestCase):
 
         self.assertIn(field, Alpha._related)
 
+    def test_field_computed_attribute_missing(self):
+
+        with self.assertRaises(AttributeError):
+
+            class Test(metaclass=ModelMeta):
+                field = Field(computed='missing_method')
+
     def test_field_computed_attribute(self):
 
         field = Field(computed='method')
@@ -113,13 +120,6 @@ class ModelMetaTest(TestCase):
                 pass
 
         self.assertIn(field, Test._computed)
-
-    def test_field_computed_attribute_missing(self):
-
-        with self.assertRaises(AttributeError):
-
-            class Test(metaclass=ModelMeta):
-                field = Field(computed='missing_method')
 
     def test_field_computed_function(self):
 
@@ -146,6 +146,13 @@ class ModelMetaTest(TestCase):
 
         self.assertIn(field, Alpha._computed)
 
+    def test_field_dynamic_attribute_missing(self):
+
+        with self.assertRaises(AttributeError):
+
+            class Test(metaclass=ModelMeta):
+                field = Field(type='invalid_method')
+
     def test_field_dynamic_attribute(self):
 
         field = Field(type='method')
@@ -157,13 +164,6 @@ class ModelMetaTest(TestCase):
                 pass
 
         self.assertIn(field, Test._dynamic)
-
-    def test_field_dynamic_attribute_missing(self):
-
-        with self.assertRaises(AttributeError):
-
-            class Test(metaclass=ModelMeta):
-                field = Field(type='invalid_method')
 
     def test_field_dynamic_function(self):
 
