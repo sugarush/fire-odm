@@ -113,3 +113,12 @@ class MongoDBModelTest(AsyncTestCase):
             }
 
         self.assertEqual(Test.collection.name, 'some_collection')
+
+    def test_save_new(self):
+        pass
+
+    def test_save_existing(self):
+        pass
+
+    def test_exists(self):
+        pass
