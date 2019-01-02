@@ -16,6 +16,7 @@ class ModelMeta(type):
         cls._related = [ ]
         cls._required = [ ]
         cls._indexed = [ ]
+        cls._validated = [ ]
         cls._computed = [ ]
         cls._dynamic = [ ]
 
@@ -38,6 +39,9 @@ class ModelMeta(type):
             if field.indexed:
                 cls._indexed.append(field)
 
+            if field.validated:
+                cls._validated.append(field)
+
             if field.computed:
                 cls._computed.append(field)
 
@@ -49,8 +53,11 @@ class ModelMeta(type):
             cls._fields.append(field)
 
         cls._check_primary()
-        cls._check_computed()
-        cls._check_dynamic()
+
+        cls._check_methods(cls._validated, 'validated')
+        cls._check_methods(cls._computed, 'computed')
+        cls._check_methods(cls._dynamic, 'type')
+
         cls.initialize()
 
     def initialize(cls):
@@ -86,30 +93,15 @@ class ModelMeta(type):
 
         cls._primary = primary[0].name
 
-    def _check_computed(cls):
+    def _check_methods(cls, fields, attr):
         methods = list(filter(lambda field: \
-            isinstance(field.computed, str), cls._computed))
+            isinstance(getattr(field, attr), str), fields))
 
         missing = list(filter(lambda field: \
-            not hasattr(cls, field.computed), methods))
+            not hasattr(cls, getattr(field, attr)), methods))
 
         if len(missing) > 0:
-            names = list(map(lambda field: field.computed, missing))
-            message = '{model} has missing methods: {fields}'.format(
-                model=cls.__name__,
-                fields=','.join(names)
-            )
-            raise AttributeError(message)
-
-    def _check_dynamic(cls):
-        methods = list(filter(lambda field: \
-            isinstance(field.type, str), cls._dynamic))
-
-        missing = list(filter(lambda field: \
-            not hasattr(cls, field.type), methods))
-
-        if len(missing) > 0:
-            names = list(map(lambda field: field.type, missing))
+            names = list(map(lambda field: getattr(field, attr), missing))
             message = '{model} has missing methods: {fields}'.format(
                 model=cls.__name__,
                 fields=','.join(names)
