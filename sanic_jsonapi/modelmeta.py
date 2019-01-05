@@ -62,8 +62,6 @@ class ModelMeta(type):
         cls._check_callable(cls._computed, 'computed')
         cls._check_callable(cls._dynamic, 'type')
 
-        cls._check_callable(cls._fields, 'type')
-
         cls.initialize()
 
     def initialize(cls):
@@ -74,7 +72,7 @@ class ModelMeta(type):
 
     def check_primary(cls, primary):
         pass
-        
+
     def _check_primary(cls):
         primary = list(filter(lambda field: field.primary, cls._fields))
 
@@ -95,11 +93,11 @@ class ModelMeta(type):
                 primary.append(field)
 
 
-        if len(primary) == 1:
+        if len(primary) == 0:
+            cls._primary = None
+        else:
             cls.check_primary(primary[0])
             cls._primary = primary[0].name
-        else:
-            cls._primary = None
 
     def _check_methods(cls, fields, attr):
         methods = list(filter(lambda field: \
@@ -110,11 +108,39 @@ class ModelMeta(type):
 
         if len(missing) > 0:
             names = list(map(lambda field: getattr(field, attr), missing))
-            message = '{model} has missing methods: {fields}'.format(
+            message = '{model} has missing methods: {methods}'.format(
                 model=cls.__name__,
-                fields=','.join(names)
+                methods=','.join(names)
             )
             raise AttributeError(message)
 
     def _check_callable(cls, fields, attr):
-        pass
+        methods = list(filter(lambda field: \
+            isinstance(getattr(field, attr), str), fields))
+
+        invalid_methods = list(filter(lambda field: \
+            not callable(getattr(cls, getattr(field, attr))), methods))
+
+        if len(invalid_methods) > 0:
+            names = list(map(lambda field: \
+                getattr(field, attr), invalid_methods))
+            message = '{model} has non-callable bindings: {methods}'.format(
+                model=cls.__name__,
+                methods=','.join(names)
+            )
+            raise AttributeError(message)
+
+        functions = list(filter(lambda field: \
+            not isinstance(getattr(field, attr), str), fields))
+
+        invalid_functions = list(filter(lambda field: \
+            not callable(getattr(field, attr)), functions))
+
+        if len(invalid_functions) > 0:
+            names = list(map(lambda field: \
+                field.name, invalid_functions))
+            message = '{model} has non-callable bindings: {methods}'.format(
+                model=cls.__name__,
+                methods=','.join(names)
+            )
+            raise AttributeError(message)

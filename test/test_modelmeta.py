@@ -173,3 +173,19 @@ class ModelMetaTest(TestCase):
             test = field
 
         self.assertIn(field, Alpha._dynamic)
+
+    def test_field_invalid_method(self):
+
+        with self.assertRaises(AttributeError):
+
+            class Test(metaclass=ModelMeta):
+                field = Field(computed='invalid')
+
+                invalid = 'invalid'
+
+    def test_field_invalid_function(self):
+
+        with self.assertRaises(AttributeError):
+
+            class Test(metaclass=ModelMeta):
+                field = Field(computed=10)
