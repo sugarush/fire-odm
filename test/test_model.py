@@ -260,6 +260,17 @@ class ModelTest(TestCase):
         with self.assertRaises(AttributeError):
             self.not_a_field
 
+    def test_setitem_and_getitem(self):
+
+        class Test(Model):
+            field = Field()
+
+        test = Test()
+
+        test['field'] = 'value'
+
+        self.assertEqual(test['field'], 'value')
+
     def test_id_setter_and_getter(self):
 
         class Test(Model):

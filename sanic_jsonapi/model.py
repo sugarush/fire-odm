@@ -34,10 +34,10 @@ class Model(object, metaclass=ModelMeta):
             super(Model, self).__setattr__(name, value)
 
     def __getitem__(self, name):
-        pass
+        return self.get(name)
 
     def __setitem__(self, name, value):
-        pass
+        self.set(name, value)
 
     @property
     def id(self):
