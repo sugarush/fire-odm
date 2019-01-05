@@ -22,21 +22,14 @@ class ModelMetaTest(TestCase):
     def test_field_primary_default(self):
 
         class Test(metaclass=ModelMeta):
-            pass
-
-        self.assertIs(Test._primary, 'id')
-
-    def test_field_primary_default_override(self):
-
-        class Test(metaclass=ModelMeta):
 
             @classmethod
             def default_primary(cls):
                 field = Field()
-                field.name = '_id'
+                field.name = 'id'
                 return field
 
-        self.assertIs(Test._primary, '_id')
+        self.assertIs(Test._primary, 'id')
 
     def test_field_primary_custom(self):
 
@@ -52,13 +45,6 @@ class ModelMetaTest(TestCase):
             class Test(metaclass=ModelMeta):
                 alpha = Field(primary=True)
                 beta = Field(primary=True)
-
-    def test_field_invalid_primary_type(self):
-
-        with self.assertRaises(AttributeError):
-
-            class Test(metaclass=ModelMeta):
-                field = Field(type=tuple, primary=True)
 
     def test_field_required(self):
 

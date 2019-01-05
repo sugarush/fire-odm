@@ -58,21 +58,23 @@ class ModelMeta(type):
         cls._check_methods(cls._computed, 'computed')
         cls._check_methods(cls._dynamic, 'type')
 
+        cls._check_callable(cls._validated, 'validated')
+        cls._check_callable(cls._computed, 'computed')
+        cls._check_callable(cls._dynamic, 'type')
+
+        cls._check_callable(cls._fields, 'type')
+
         cls.initialize()
 
     def initialize(cls):
         pass
 
     def default_primary(cls):
-        field = Field()
-        field.name = 'id'
-        field.primary = True
-        return field
+        pass
 
     def check_primary(cls, primary):
-        if not primary.type in (bool, int, float, str):
-            raise AttributeError('The primary key for a field must be of type: (bool, int, float, str).')
-
+        pass
+        
     def _check_primary(cls):
         primary = list(filter(lambda field: field.primary, cls._fields))
 
@@ -85,13 +87,19 @@ class ModelMeta(type):
             raise AttributeError(message)
 
         if not primary:
+
             field = cls.default_primary()
-            cls._fields.append(field)
-            primary.append(field)
 
-        cls.check_primary(primary[0])
+            if field:
+                cls._fields.append(field)
+                primary.append(field)
 
-        cls._primary = primary[0].name
+
+        if len(primary) == 1:
+            cls.check_primary(primary[0])
+            cls._primary = primary[0].name
+        else:
+            cls._primary = None
 
     def _check_methods(cls, fields, attr):
         methods = list(filter(lambda field: \
@@ -107,3 +115,6 @@ class ModelMeta(type):
                 fields=','.join(names)
             )
             raise AttributeError(message)
+
+    def _check_callable(cls, fields, attr):
+        pass

@@ -263,13 +263,31 @@ class ModelTest(TestCase):
     def test_id_setter_and_getter(self):
 
         class Test(Model):
-            pass
+
+            @classmethod
+            def default_primary(cls):
+                field = Field()
+                field.name = '_id'
+                return field
 
         test = Test()
 
         test.id = '1'
 
         self.assertIs(test.id, '1')
+
+    def test_id_setter_and_getter_no_primary(self):
+
+        class Test(Model):
+            pass
+
+        test = Test()
+
+        with self.assertRaises(Error):
+            test.id = '1'
+
+        with self.assertRaises(Error):
+            test.id
 
     def test_validate(self):
 

@@ -41,11 +41,27 @@ class Model(object, metaclass=ModelMeta):
 
     @property
     def id(self):
-        return self.get(self._primary)
+        if self._primary:
+            return self.get(self._primary)
+        else:
+            raise Error(
+                title = "Cannot Get ID",
+                detail = "Cannot get \"id\" because model {model} has no primary key.".format(
+                    model=self.__class__.__name__
+                )
+            )
 
     @id.setter
     def id(self, value):
-        self.set(self._primary, value)
+        if self._primary:
+            self.set(self._primary, value)
+        else:
+            raise Error(
+                title = "Cannot Set ID",
+                detail = "Cannot set \"id\" because model {model} has no primary key.".format(
+                    model=self.__class__.__name__
+                )
+            )
 
     @classmethod
     def _check_undefined(cls, kargs):
