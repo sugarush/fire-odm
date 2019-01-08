@@ -14,9 +14,9 @@ install:
 script:
   - sleep 15 # wait for mongodb to be able to accept connections
   - coverage run --source "${MODULE}" --module "unittest" discover --verbose "test"
+  - coverage report
 
 after_success:
-  - coverage report
   - codecov --token "3a0d0a6d-f6cd-4a94-8540-30852d4ca64e" > /dev/null
 
 notifications:
