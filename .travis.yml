@@ -12,6 +12,7 @@ install:
   - source .venv-activate
 
 script:
+  - sleep 15 # wait for mongodb to be able to accept connections
   - coverage run --source "${MODULE}" --module "unittest" discover --verbose "test"
 
 after_success:
