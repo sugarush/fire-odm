@@ -230,6 +230,77 @@ class Model(object, metaclass=ModelMeta):
                 # verify that nested models have required fields
                 model = self._data.get(field.name, field.type())
                 model.validate()
+            elif field.validated:
+                controller = self._get_controller(field.name)
+                if controller:
+                    if isinstance(field.validated, str):
+                        getattr(self, field.validated)(controller.serialize())
+                    else: # field.validated is not a string
+                        field.validated(controller.serialize())
+                elif field.computed:
+                    value = self.get(field.name)
+                    if field.computed_type:
+                        if field.computed_empty and value:
+                            if isinstance(field.validated, str):
+                                getattr(self, field.validated)(value)
+                            else: # field.validated is not a string
+                                field.validated(value)
+                        else: # field.computed_empty is false or no value
+                            if isinstance(field.computed, str):
+                                if isinstance(field.validated, str):
+                                    value = getattr(self, field.computed)()
+                                    getattr(self, field.validated)(value)
+                                else: # field.validated is not a string
+                                    value = getattr(self, field.computed)()
+                                    field.validated(value)
+                            else: # field.computed is not a string
+                                if isinstance(field.validated, str):
+                                    value = field.computed()
+                                    getattr(self, field.validated)(value)
+                                else: # field.validated is not a string
+                                    value = field.computed()
+                                    field.validated(value)
+                    else: # field.computed_type is false
+                        if field.computed_empty and value:
+                            # XXX: calls to field.type may not be necessary in
+                            # XXX: this block. value is typed when it is set on
+                            # XXX: this object.
+                            if isinstance(field.validated, str):
+                                value = field.type(value)
+                                getattr(self, field.validated)(value)
+                            else: # field.validated is not a string
+                                value = field.type(value)
+                                field.validated(value)
+                        else: # field.computed_empty is false or no value
+                            if isinstance(field.validated, str):
+                                if isinstance(field.computed, str):
+                                    value = getattr(self, field.computed)()
+                                    value = field.type(value)
+                                    getattr(self, field.validated)(value)
+                                else: # field.computed is not a string
+                                    value = field.computed()
+                                    value = field.type(value)
+                                    getattr(self, field.validated)(value)
+                            else: # field.validated is not a string
+                                if isinstance(field.computed, str):
+                                    value = getattr(self, field.computed)()
+                                    value = field.type(value)
+                                    field.validated(value)
+                                else: # field.computed is not a string
+                                    value = field.computed()
+                                    value = field.type(value)
+                                    field.validated(value)
+                else: # field.computed is not a truthy value
+                    # XXX: calls to field.type may not be necessary in
+                    # XXX: this block. value is typed when it is set on
+                    # XXX: this object.
+                    value = self.get(field.name)
+                    value = field.type(value)
+                    if value:
+                        if isinstance(field.validated, str):
+                            getattr(self, field.validated)(value)
+                        else:
+                            field.validated(value)
 
     def serialize(self, computed=False, controllers=False, reset=False):
         obj = self._data.copy()
