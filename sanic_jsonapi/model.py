@@ -16,7 +16,8 @@ class Model(object, metaclass=ModelMeta):
         self.update_direct(dictionary, **kargs)
 
     def __repr__(self):
-        return json.dumps(self.serialize(controllers=True), indent=4)
+        return json.dumps(self.serialize(controllers=True),
+            indent=4, sort_keys=True)
 
     def __str__(self):
         return repr(self)
@@ -326,14 +327,18 @@ class Model(object, metaclass=ModelMeta):
                     continue
                 elif field.computed_type:
                     if type(field.computed) == str:
-                        obj[field.name] = getattr(self, field.computed)()
+                        value = getattr(self, field.computed)()
+                        obj[field.name] = value
                     else:
-                        obj[field.name] = field.computed()
+                        value = field.computed()
+                        obj[field.name] = value
                 else:
                     if type(field.computed) == str:
-                        obj[field.name] = field.type(getattr(self, field.computed)())
+                        value = field.type(getattr(self, field.computed)())
+                        obj[field.name] = value
                     else:
-                        obj[field.name] = field.type(field.computed())
+                        value = field.type(field.computed())
+                        obj[field.name] = value
 
         return obj
 
