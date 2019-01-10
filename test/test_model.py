@@ -356,7 +356,7 @@ class ModelTest(TestCase):
 
         test.validate()
 
-    def test_validate_computed_type_empty_with_value_function(self):
+    def test_validate_function_computed_type_empty_with_value(self):
 
         scope = self
 
@@ -371,7 +371,7 @@ class ModelTest(TestCase):
 
         test.validate()
 
-    def test_validate_computed_type_empty_with_value_method(self):
+    def test_validate_method_computed_type_empty_with_value(self):
 
         scope = self
 
@@ -388,7 +388,7 @@ class ModelTest(TestCase):
 
         test.validate()
 
-    def test_validate_computed_type_without_value_function(self):
+    def test_validate_function_computed_type_without_value(self):
 
         scope = self
 
@@ -401,7 +401,7 @@ class ModelTest(TestCase):
 
         test.validate()
 
-    def test_validate_computed_method_type_without_value_function(self):
+    def test_validate_function_computed_method_type_without_value(self):
 
         scope = self
 
@@ -417,7 +417,7 @@ class ModelTest(TestCase):
 
         test.validate()
 
-    def test_validate_computed_method_type_without_value_method(self):
+    def test_validate_method_computed_method_type_without_value(self):
 
         scope = self
 
@@ -436,7 +436,7 @@ class ModelTest(TestCase):
 
         test.validate()
 
-    def test_validate_computed_function_type_without_value_method(self):
+    def test_validate_method_computed_function_type_without_value(self):
 
         scope = self
 
@@ -452,7 +452,7 @@ class ModelTest(TestCase):
 
         test.validate()
 
-    def test_validate_computed_empty_with_value_method(self):
+    def test_validate_method_computed_empty_with_value(self):
 
         scope = self
 
@@ -470,7 +470,7 @@ class ModelTest(TestCase):
 
         test.validate()
 
-    def test_validate_computed_empty_with_value_function(self):
+    def test_validate_function_computed_empty_with_value(self):
 
         scope = self
 
@@ -485,7 +485,7 @@ class ModelTest(TestCase):
 
         test.validate()
 
-    def test_validate_computed_function_empty_without_value_method(self):
+    def test_validate_method_computed_function_empty_without_value(self):
 
         scope = self
 
@@ -501,7 +501,7 @@ class ModelTest(TestCase):
 
         test.validate()
 
-    def test_validate_computed_function_empty_without_value_function(self):
+    def test_validate_function_computed_function_empty_without_value(self):
 
         scope = self
 
@@ -514,7 +514,7 @@ class ModelTest(TestCase):
 
         test.validate()
 
-    def test_validate_computed_empty_without_value_method(self):
+    def test_validate_method_computed_empty_without_value(self):
 
         scope = self
 
@@ -533,7 +533,7 @@ class ModelTest(TestCase):
 
         test.validate()
 
-    def test_validate_computed_empty_without_value_function(self):
+    def test_validate_function_computed_empty_without_value(self):
 
         scope = self
 
