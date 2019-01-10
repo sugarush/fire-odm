@@ -2,18 +2,23 @@ import unittest
 import asyncio
 
 
-# close the default event loop
-asyncio.get_event_loop().close()
-
-
 class AsyncTestCase(unittest.TestCase):
 
+    default_loop = False
+
     def setUpEventLoop(self):
-        self.loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(self.loop)
+        if self.default_loop:
+            if not hasattr(self, 'loop'):
+                self.loop = asyncio.get_event_loop()
+        else:
+            if asyncio.get_event_loop().is_running():
+                asyncio.get_event_loop().close()
+            self.loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(self.loop)
 
     def tearDownEventLoop(self):
-        self.loop.close()
+        if not self.default_loop:
+            self.loop.close()
 
     async def asyncSetUp(self):
         pass
