@@ -13,7 +13,7 @@ class OperationController(ABC):
         self.field = field
 
     def __repr__(self):
-        return json.dumps(self.serialize(), indent=4)
+        return json.dumps(self.serialize(), indent=4, sort_keys=True)
 
     def __str__(self):
         return repr(self)
