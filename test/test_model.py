@@ -300,7 +300,7 @@ class ModelTest(TestCase):
         with self.assertRaises(Error):
             test.id
 
-    def test_validate(self):
+    def test_validate_required(self):
 
         class Test(Model):
             field = Field(required=True)
@@ -326,6 +326,257 @@ class ModelTest(TestCase):
 
         with self.assertRaises(Error):
             alpha.validate()
+
+    def test_validate_controller_function(self):
+
+        scope = self
+
+        class Test(Model):
+            field = Field(type=list, validated=lambda value: scope.assertEqual(value, [ 1, 2, 3 ]))
+
+        test = Test()
+
+        test.field = [ 1, 2, 3 ]
+
+        test.validate()
+
+    def test_validate_controller_method(self):
+
+        scope = self
+
+        class Test(Model):
+            field = Field(type=list, validated='validate_field')
+
+            def validate_field(self, value):
+                scope.assertEqual(value, [ 1, 2, 3 ])
+
+        test = Test()
+
+        test.field = [ 1, 2, 3 ]
+
+        test.validate()
+
+    def test_validate_computed_type_empty_with_value_function(self):
+
+        scope = self
+
+        class Test(Model):
+            field = Field(computed_type=True, computed_empty=True,
+                computed=lambda: '2',
+                validated=lambda value: scope.assertEqual(value, '1'))
+
+        test = Test()
+
+        test.field = '1'
+
+        test.validate()
+
+    def test_validate_computed_type_empty_with_value_method(self):
+
+        scope = self
+
+        class Test(Model):
+            field = Field(computed_type=True, computed_empty=True,
+                computed=lambda: '2', validated='validate_field')
+
+            def validate_field(self, value):
+                scope.assertEqual(value, '1')
+
+        test = Test()
+
+        test.field = '1'
+
+        test.validate()
+
+    def test_validate_computed_type_without_value_function(self):
+
+        scope = self
+
+        class Test(Model):
+            field = Field(computed_type=True,
+                computed=lambda: '1',
+                validated=lambda value: scope.assertEqual(value, '1'))
+
+        test = Test()
+
+        test.validate()
+
+    def test_validate_computed_method_type_without_value_function(self):
+
+        scope = self
+
+        class Test(Model):
+            field = Field(computed_type=True,
+                computed='get_value',
+                validated=lambda value: scope.assertEqual(value, '1'))
+
+            def get_value(self):
+                return '1'
+
+        test = Test()
+
+        test.validate()
+
+    def test_validate_computed_method_type_without_value_method(self):
+
+        scope = self
+
+        class Test(Model):
+            field = Field(computed_type=True,
+                computed='get_value',
+                validated='check_value')
+
+            def get_value(self):
+                return '1'
+
+            def check_value(self, value):
+                scope.assertEqual(value, '1')
+
+        test = Test()
+
+        test.validate()
+
+    def test_validate_computed_function_type_without_value_method(self):
+
+        scope = self
+
+        class Test(Model):
+            field = Field(computed_type=True,
+                computed=lambda: '1',
+                validated='check_value')
+
+            def check_value(self, value):
+                scope.assertEqual(value, '1')
+
+        test = Test()
+
+        test.validate()
+
+    def test_validate_computed_empty_with_value_method(self):
+
+        scope = self
+
+        class Test(Model):
+            field = Field(computed_empty=True,
+                computed=lambda: '2',
+                validated='check_value')
+
+            def check_value(self, value):
+                scope.assertEqual(value, '1')
+
+        test = Test()
+
+        test.field = '1'
+
+        test.validate()
+
+    def test_validate_computed_empty_with_value_function(self):
+
+        scope = self
+
+        class Test(Model):
+            field = Field(computed_empty=True,
+                computed=lambda: '2',
+                validated=lambda value: scope.assertEqual(value, '1'))
+
+        test = Test()
+
+        test.field = '1'
+
+        test.validate()
+
+    def test_validate_computed_function_empty_without_value_method(self):
+
+        scope = self
+
+        class Test(Model):
+            field = Field(computed_empty=True,
+                computed=lambda: '1',
+                validated='check_value')
+
+            def check_value(self, value):
+                scope.assertEqual(value, '1')
+
+        test = Test()
+
+        test.validate()
+
+    def test_validate_computed_function_empty_without_value_function(self):
+
+        scope = self
+
+        class Test(Model):
+            field = Field(computed_empty=True,
+                computed=lambda: '1',
+                validated=lambda value: scope.assertEqual(value, '1'))
+
+        test = Test()
+
+        test.validate()
+
+    def test_validate_computed_empty_without_value_method(self):
+
+        scope = self
+
+        class Test(Model):
+            field = Field(computed_empty=True,
+                computed='get_value',
+                validated='check_value')
+
+            def get_value(self):
+                return '1'
+
+            def check_value(self, value):
+                scope.assertEqual(value, '1')
+
+        test = Test()
+
+        test.validate()
+
+    def test_validate_computed_empty_without_value_function(self):
+
+        scope = self
+
+        class Test(Model):
+            field = Field(computed_empty=True,
+                computed='get_value',
+                validated=lambda value: scope.assertEqual(value, '1'))
+
+            def get_value(self):
+                return '1'
+
+        test = Test()
+
+        test.validate()
+
+    def test_validate_method(self):
+
+        scope = self
+
+        class Test(Model):
+            field = Field(validated='check_value')
+
+            def check_value(self, value):
+                scope.assertEqual(value, '1')
+
+        test = Test()
+
+        test.field = '1'
+
+        test.validate()
+
+    def test_validate_function(self):
+
+        scope = self
+
+        class Test(Model):
+            field = Field(validated=lambda value: scope.assertEqual(value, '1'))
+
+        test = Test()
+
+        test.field = '1'
+
+        test.validate()
 
     def test_serialize(self):
 

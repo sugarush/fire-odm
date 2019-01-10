@@ -295,11 +295,12 @@ class Model(object, metaclass=ModelMeta):
                     # XXX: this block. value is typed when it is set on
                     # XXX: this object.
                     value = self.get(field.name)
-                    value = field.type(value)
                     if value:
                         if isinstance(field.validated, str):
+                            value = field.type(value)
                             getattr(self, field.validated)(value)
                         else:
+                            value = field.type(value)
                             field.validated(value)
 
     def serialize(self, computed=False, controllers=False, reset=False):
