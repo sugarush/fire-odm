@@ -235,3 +235,20 @@ class MongoDBModelTest(AsyncTestCase):
         ])
 
         self.assertEqual(len(models), 3)
+
+    async def test_drop(self):
+
+        class Test(MongoDBModel):
+            pass
+
+        models = await Test.add([
+            { },
+            { },
+            { }
+        ])
+
+        id = models[0].id
+
+        await Test.drop()
+
+        self.assertFalse(await Test.exists(id))

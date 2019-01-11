@@ -61,6 +61,10 @@ class MongoDBModel(Model):
             raise AttributeError('MongoDBModel primary key type must be: ObjectId')
 
     @classmethod
+    async def drop(cls):
+        await cls.collection.drop()
+
+    @classmethod
     async def exists(cls, id):
         if id:
             document = await cls.collection.find_one(

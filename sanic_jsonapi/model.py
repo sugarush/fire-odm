@@ -357,6 +357,10 @@ class Model(object, metaclass=ModelMeta):
         return data
 
     @classmethod
+    async def drop(cls):
+        raise NotImplementedError()
+
+    @classmethod
     async def exists(cls, id):
         raise NotImplementedError()
 
