@@ -9,7 +9,6 @@ class ModelMeta(type):
         super(ModelMeta, cls).__init__(name, bases, attrs)
 
         cls._table = inflection.tableize(cls.__name__)
-        #cls._route = '/' + cls._table
 
         cls._fields = [ ]
         cls._nested = [ ]
