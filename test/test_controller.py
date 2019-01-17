@@ -1,8 +1,8 @@
 from unittest import TestCase
 
-from sanic_jsonapi import Model, Field, Error
-from sanic_jsonapi.controller.base import ControllerError
-from sanic_jsonapi.controller.list import ListController
+from sugar_odm import Model, Field, Error
+from sugar_odm.controller.base import ControllerError
+from sugar_odm.controller.list import ListController
 
 
 class TestListController(TestCase):

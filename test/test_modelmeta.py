@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from sanic_jsonapi import ModelMeta, Field
+from sugar_odm import ModelMeta, Field
 
 
 class ModelMetaTest(TestCase):

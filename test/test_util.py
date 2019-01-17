@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from sanic_jsonapi.util import serialize
+from sugar_odm.util import serialize
 
 
 class TestUtil(TestCase):

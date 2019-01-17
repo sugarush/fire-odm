@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from sanic_jsonapi import AsyncTestCase, Field
-from sanic_jsonapi.backend.mongodb import MongoDB, MongoDBModel
+from sugar_odm import AsyncTestCase, Field
+from sugar_odm.backend.mongodb import MongoDB, MongoDBModel
 
 
 class MongoDBTest(TestCase):
