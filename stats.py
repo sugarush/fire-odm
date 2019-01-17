@@ -3,9 +3,9 @@ import cProfile
 import pstats
 import io
 
-from test.test_modelmeta import ModelMetaTest
-from test.test_model import ModelTest
-from test.test_rethinkdb import RethinkDBModelTest
+#from test.test_modelmeta import ModelMetaTest
+#from test.test_model import ModelTest
+#from test.test_rethinkdb import RethinkDBModelTest
 
 #suite = unittest.TestLoader().discover('./test')
 
