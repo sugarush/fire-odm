@@ -8,3 +8,4 @@ rethinkdb_data
 rethinkdb
 htmlcov
 .requirements.back
+.profile
