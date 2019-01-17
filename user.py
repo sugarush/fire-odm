@@ -1,6 +1,10 @@
 from datetime import datetime
 
-from sanic_jsonapi import MongoDBModel, Field
+from sugar_odm import MongoDBModel, Field
+
+
+class Type(MongoDBModel):
+    name = Field(required=True)
 
 class Name(MongoDBModel):
     first = Field(required=True)
@@ -8,6 +12,7 @@ class Name(MongoDBModel):
 
 class User(MongoDBModel):
     name = Field(type=Name)
+    type = Field(required=True)
     updated = Field(computed='timestamp')
     created = Field(computed='timestamp', computed_empty=True)
 
