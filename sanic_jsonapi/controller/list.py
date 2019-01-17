@@ -1,7 +1,7 @@
-from . base import OperationController, ControllerError
+from . base import Controller, ControllerError
 
 
-class ListController(OperationController):
+class ListController(Controller):
 
     def __init__(self, model, field):
         super(ListController, self).__init__(model, field)
@@ -21,12 +21,12 @@ class ListController(OperationController):
 
     def _check_operation(self):
         if self.to_empty or self.to_replace:
-            raise ControllerError('The manager is set to empty or replace the list. Please call "reset" first.')
+            raise ControllerError('The controller is set to empty or to replace the list. Please call "reset" first.')
 
     def _check_value(self, value):
         if self.types:
             if not type(value) in self.types:
-                raise ControllerError('Invalid Value Type')
+                raise ControllerError('Invalid value type.')
 
     def _check_values(self, values):
         for value in values:

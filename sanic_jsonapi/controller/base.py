@@ -6,7 +6,7 @@ class ControllerError(Exception):
     pass
 
 
-class OperationController(ABC):
+class Controller(ABC):
 
     def __init__(self, model, field):
         self.model = model
