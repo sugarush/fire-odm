@@ -327,6 +327,19 @@ class ModelTest(TestCase):
         with self.assertRaises(Error):
             alpha.validate()
 
+    def test_validate_nested_required_direct(self):
+
+        class Beta(Model):
+            pass
+
+        class Alpha(Model):
+            beta = Field(type=Beta, required=True)
+
+        alpha = Alpha()
+
+        with self.assertRaises(Error):
+            alpha.validate()
+
     def test_validate_controller_function(self):
 
         scope = self
