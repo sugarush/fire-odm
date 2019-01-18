@@ -8,7 +8,11 @@ setup(
     author='Lucifer Avada',
     author_email='lucifer.avada@gmail.com',
     url='https://github.com/sugarush/sugar-odm',
-    packages=['sugar_odm'],
+    packages=[
+        'sugar_odm',
+        'sugar_odm.backend',
+        'sugar_odm.controller'
+    ],
     description='An async ODM for MongoDB.',
     install_requires=[
         'inflection==0.3.1',
