@@ -14,7 +14,7 @@ setup(
         'sugar_asynctest'
     ],
     dependency_links=[
-        'git+https://github.com/sugarush/sugar-asynctest@f652ade886214ecb74beeb39f6fb5533e03305ed#egg=sugar_asynctest'
+        'git+https://github.com/sugarush/sugar-asynctest@f652ade886214ecb74beeb39f6fb5533e03305ed#egg=sugar_asynctest-0'
 
     ]
 )
