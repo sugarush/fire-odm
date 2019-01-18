@@ -58,7 +58,7 @@ class MongoDBModel(Model):
             raise AttributeError('MongoDBModel primary key name must be: _id')
 
         if not primary.type is str:
-            raise AttributeError('MongoDBModel primary key type must be: ObjectId')
+            raise AttributeError('MongoDBModel primary key type must be: str')
 
     @classmethod
     async def drop(cls):
