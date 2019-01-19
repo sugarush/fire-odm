@@ -323,29 +323,29 @@ class Model(object, metaclass=ModelMeta):
 
     @classmethod
     async def drop(cls):
-        raise NotImplementedError()
+        raise NotImplementedError('Method not implemented.')
 
     @classmethod
     async def exists(cls, id):
-        raise NotImplementedError()
+        raise NotImplementedError('Method not implemented.')
 
     @classmethod
     async def find_one(cls, id):
-        raise NotImplementedError()
+        raise NotImplementedError('Method not implemented.')
 
     @classmethod
     async def find(cls, query={ }):
-        raise NotImplementedError()
+        raise NotImplementedError('Method not implemented.')
 
     @classmethod
     async def add(cls, *args):
-        raise NotImplementedError()
+        raise NotImplementedError('Method not implemented.')
 
     async def save(self):
-        raise NotImplementedError()
+        raise NotImplementedError('Method not implemented.')
 
     async def load(self):
-        raise NotImplementedError()
+        raise NotImplementedError('Method not implemented.')
 
     async def delete(self):
-        raise NotImplementedError()
+        raise NotImplementedError('Method not implemented.')
