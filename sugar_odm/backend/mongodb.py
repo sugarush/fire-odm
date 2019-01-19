@@ -10,11 +10,15 @@ from .. model import Model, Field
 class MongoDB(object):
 
     connections = { }
+    loop = None
 
     @classmethod
     def connect(cls, **kargs):
         kargs['connect'] = True
         key = serialize(kargs)
+
+        if cls.loop:
+            kargs['io_loop'] = cls.loop
 
         connection = cls.connections.get(key)
         if connection:
@@ -23,11 +27,22 @@ class MongoDB(object):
         cls.connections[key] = AsyncIOMotorClient(**kargs)
         return cls.connections[key]
 
+    @classmethod
+    def set_event_loop(cls, loop):
+        cls.loop = loop
+
 
 class MongoDBModel(Model):
 
+    _connection = None
+    _database = None
+    _collection = None
+
     @classmethod
-    def initialize(cls):
+    def _connect(cls):
+        if cls._connection:
+            return
+
         if cls.__name__ == 'MongoDBModel':
             return
 
@@ -40,9 +55,9 @@ class MongoDBModel(Model):
         if not hasattr(cls, 'collection_options'):
             cls.collection_options = { 'name': cls._table }
 
-        cls.connection = MongoDB.connect(**cls.connection_options)
-        cls.database = cls.connection.get_database(**cls.database_options)
-        cls.collection = cls.database.get_collection(**cls.collection_options)
+        cls._connection = MongoDB.connect(**cls.connection_options)
+        cls._database = cls._connection.get_database(**cls.database_options)
+        cls._collection = cls._database.get_collection(**cls.collection_options)
 
     @classmethod
     def default_primary(cls):
@@ -62,12 +77,14 @@ class MongoDBModel(Model):
 
     @classmethod
     async def drop(cls):
-        await cls.collection.drop()
+        cls._connect()
+        await cls._collection.drop()
 
     @classmethod
     async def exists(cls, id):
+        cls._connect()
         if id:
-            document = await cls.collection.find_one(
+            document = await cls._collection.find_one(
                 { '_id': ObjectId(id) },
                 { '_id': True }
             )
@@ -80,8 +97,9 @@ class MongoDBModel(Model):
 
     @classmethod
     async def find_one(cls, id):
+        cls._connect()
         if id:
-            document = await cls.collection.find_one(
+            document = await cls._collection.find_one(
                 { '_id': ObjectId(id) }
             )
             if document:
@@ -95,12 +113,14 @@ class MongoDBModel(Model):
 
     @classmethod
     async def find(cls, *args, **kargs):
-        cursor = cls.collection.find(*args, **kargs)
+        cls._connect()
+        cursor = cls._collection.find(*args, **kargs)
         async for document in cursor:
             yield cls(document)
 
     @classmethod
     async def add(cls, args):
+        cls._connect()
         if isinstance(args, dict):
             model = cls(args)
             await model.save()
@@ -117,12 +137,12 @@ class MongoDBModel(Model):
             raise Exception(message)
 
     async def save(self):
+        self._connect()
         self.validate()
-
         if self.id:
             data = self.serialize(computed=True, controllers=True, reset=True)
             del data['_id']
-            document = await self.collection.find_one_and_update(
+            document = await self._collection.find_one_and_update(
                 { '_id': ObjectId(self.id) },
                 { '$set': data },
                 return_document=ReturnDocument.AFTER
@@ -134,7 +154,7 @@ class MongoDBModel(Model):
                 raise Exception(message)
         else:
             data = self.serialize(computed=True, controllers=True, reset=True)
-            result = await self.collection.insert_one(data)
+            result = await self._collection.insert_one(data)
             if result:
                 self.id = result.inserted_id
                 await self.load()
@@ -143,8 +163,9 @@ class MongoDBModel(Model):
                 raise Exception(message)
 
     async def load(self):
+        self._connect()
         if self.id:
-            document = await self.collection \
+            document = await self._collection \
                 .find_one({ '_id': ObjectId(self.id) })
             if document:
                 self.update(document)
@@ -156,8 +177,9 @@ class MongoDBModel(Model):
             raise Exception(message)
 
     async def delete(self):
+        self._connect()
         if self.id:
-            result = await self.collection \
+            result = await self._collection \
                 .delete_one({ '_id': ObjectId(self.id) })
             if result:
                 if result.deleted_count == 0:
