@@ -1,6 +1,7 @@
 from unittest import TestCase
 
 from sugar_asynctest import AsyncTestCase
+
 from sugar_odm import Field
 from sugar_odm.backend.mongodb import MongoDB, MongoDBModel
 
