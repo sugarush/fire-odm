@@ -9,6 +9,35 @@ from . controller.list import ListController
 
 class Model(object, metaclass=ModelMeta):
 
+    @classmethod
+    async def drop(cls):
+        raise NotImplementedError('Model.drop not implemented.')
+
+    @classmethod
+    async def exists(cls, id):
+        raise NotImplementedError('Model.exists not implemented.')
+
+    @classmethod
+    async def find_one(cls, id):
+        raise NotImplementedError('Model.find_one not implemented.')
+
+    @classmethod
+    async def find(cls, query={ }):
+        raise NotImplementedError('Model.find not implemented.')
+
+    @classmethod
+    async def add(cls, *args):
+        raise NotImplementedError('Model.add not implemented.')
+
+    async def save(self):
+        raise NotImplementedError('Model.save not implemented.')
+
+    async def load(self):
+        raise NotImplementedError('Model.load not implemented.')
+
+    async def delete(self):
+        raise NotImplementedError('Model.delete not implemented.')
+
     def __init__(self, dictionary=None, **kargs):
         self._data = { }
         self._controllers = { }
@@ -320,32 +349,3 @@ class Model(object, metaclass=ModelMeta):
                 data[field.name] = model.operations(reset=reset)
 
         return data
-
-    @classmethod
-    async def drop(cls):
-        raise NotImplementedError('Method not implemented.')
-
-    @classmethod
-    async def exists(cls, id):
-        raise NotImplementedError('Method not implemented.')
-
-    @classmethod
-    async def find_one(cls, id):
-        raise NotImplementedError('Method not implemented.')
-
-    @classmethod
-    async def find(cls, query={ }):
-        raise NotImplementedError('Method not implemented.')
-
-    @classmethod
-    async def add(cls, *args):
-        raise NotImplementedError('Method not implemented.')
-
-    async def save(self):
-        raise NotImplementedError('Method not implemented.')
-
-    async def load(self):
-        raise NotImplementedError('Method not implemented.')
-
-    async def delete(self):
-        raise NotImplementedError('Method not implemented.')
