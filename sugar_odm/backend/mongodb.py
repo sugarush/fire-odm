@@ -4,7 +4,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import ReturnDocument
 
 from .. util import serialize
-from .. model import Model, Field, Error
+from .. model import Model, Field
 
 
 class MongoDB(object):
@@ -75,10 +75,8 @@ class MongoDBModel(Model):
                 return True
             return False
         else:
-            raise Error(
-                title = 'Document Exists Failed',
-                detail = 'No document ID provided.'
-            )
+            message = 'No document ID provided.'
+            raise Exception(message)
 
     @classmethod
     async def find_one(cls, id):
@@ -89,15 +87,11 @@ class MongoDBModel(Model):
             if document:
                 return cls(document)
             else:
-                raise Error(
-                    title = 'Document Find One Failed',
-                    detail = 'No document returned.'
-                )
+                message = 'No document returned.'
+                raise Exception(message)
         else:
-            raise Error(
-                title = 'Document Find One Failed',
-                detail = 'No document ID provided.'
-            )
+            message = 'No document ID provided.'
+            raise Exception(message)
 
     @classmethod
     async def find(cls, *args, **kargs):
@@ -119,10 +113,8 @@ class MongoDBModel(Model):
                 models.append(model)
             return models
         else:
-            raise Error(
-                title = 'Document Add Failed',
-                detail = 'Invalid argument to MongoDBModel.add: must be a list or dict.'
-            )
+            message = 'Invalid argument to MongoDBModel.add: must be a list or dict.'
+            raise Exception(message)
 
     async def save(self):
         self.validate()
@@ -138,10 +130,8 @@ class MongoDBModel(Model):
             if document:
                 self.update(document)
             else:
-                raise Error(
-                    title = 'Document Save Failed',
-                    detail = 'No document returned.'
-                )
+                message = 'No document returned.'
+                raise Exception(message)
         else:
             data = self.serialize(computed=True, controllers=True, reset=True)
             result = await self.collection.insert_one(data)
@@ -149,10 +139,8 @@ class MongoDBModel(Model):
                 self.id = result.inserted_id
                 await self.load()
             else:
-                raise Error(
-                    title = 'Document Save Failed',
-                    detail = 'Inserted ID not available or non-existent.'
-                )
+                message = 'Inserted ID not available or non-existent.'
+                raise Exception(message)
 
     async def load(self):
         if self.id:
@@ -161,15 +149,11 @@ class MongoDBModel(Model):
             if document:
                 self.update(document)
             else:
-                raise Error(
-                    title = 'Document Load Failed',
-                    detail = 'No document returned.'
-                )
+                message = 'No document returned.'
+                raise Exception(message)
         else:
-            raise Error(
-                title = 'Document Load Failed',
-                detail = 'No document ID, cannot load.'
-            )
+            message = 'No document ID, cannot load.'
+            raise Exception(message)
 
     async def delete(self):
         if self.id:
@@ -177,19 +161,13 @@ class MongoDBModel(Model):
                 .delete_one({ '_id': ObjectId(self.id) })
             if result:
                 if result.deleted_count == 0:
-                    raise Error(
-                        title = 'Document Delete Failed',
-                        detail = 'Deleted count is zero.'
-                    )
+                    message = 'Deleted count is zero.'
+                    raise Exception(message)
                 else:
                     self._data = { }
             else:
-                raise Error(
-                    title = 'Document Delete Failed',
-                    detail = 'Collection operation result is a falsy value.'
-                )
+                message = 'Collection operation result is a falsy value.'
+                raise Exception(message)
         else:
-            raise Error(
-                title = 'Document Delete Failed',
-                detail = 'No document ID, cannot delete.'
-            )
+            message = 'No document ID, cannot delete.'
+            raise Exception(message)

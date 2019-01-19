@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from sugar_odm import Model, Field, Error
+from sugar_odm import Model, Field
 from sugar_odm.controller.base import ControllerError
 from sugar_odm.controller.list import ListController
 

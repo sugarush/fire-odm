@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from sugar_odm import Model, Field, Error
+from sugar_odm import Model, Field
 from sugar_odm.controller.list import ListController
 
 
@@ -31,7 +31,7 @@ class ModelTest(TestCase):
 
         test = Test()
 
-        with self.assertRaises(Error):
+        with self.assertRaises(Exception):
             test._check_undefined({ 'field': 'value' })
 
     def test_check_missing(self):
@@ -41,7 +41,7 @@ class ModelTest(TestCase):
 
         test = Test()
 
-        with self.assertRaises(Error):
+        with self.assertRaises(Exception):
             test._check_missing({ })
 
     def test_check_field(self):
@@ -54,7 +54,7 @@ class ModelTest(TestCase):
         field = test._check_field('field')
         self.assertTrue(field)
 
-        with self.assertRaises(Error):
+        with self.assertRaises(Exception):
             test._check_field('undefined')
 
     def test_get_field(self):
@@ -90,7 +90,7 @@ class ModelTest(TestCase):
 
         test = Test()
 
-        with self.assertRaises(Error):
+        with self.assertRaises(Exception):
             test.set('field', 'invalid')
 
     def test_set_undefined(self):
@@ -100,7 +100,7 @@ class ModelTest(TestCase):
 
         test = Test()
 
-        with self.assertRaises(Error):
+        with self.assertRaises(Exception):
             test.set('field', 'value')
 
     def test_set_nested_model_from_dict(self):
@@ -138,7 +138,7 @@ class ModelTest(TestCase):
 
         alpha = Alpha()
 
-        with self.assertRaises(Error):
+        with self.assertRaises(Exception):
             alpha.set('beta', 'test')
 
     def test_set_multiple_nested(self):
@@ -181,7 +181,7 @@ class ModelTest(TestCase):
 
         test = Test()
 
-        with self.assertRaises(Error):
+        with self.assertRaises(Exception):
             test.set('field', 'hello')
 
     def test_update_keyword(self):
@@ -237,7 +237,7 @@ class ModelTest(TestCase):
 
         alpha = Alpha()
 
-        with self.assertRaises(Error):
+        with self.assertRaises(Exception):
             alpha.beta = 'invalid'
 
         alpha.beta = { }
@@ -294,10 +294,10 @@ class ModelTest(TestCase):
 
         test = Test()
 
-        with self.assertRaises(Error):
+        with self.assertRaises(Exception):
             test.id = '1'
 
-        with self.assertRaises(Error):
+        with self.assertRaises(Exception):
             test.id
 
     def test_validate_required(self):
@@ -307,7 +307,7 @@ class ModelTest(TestCase):
 
         test = Test()
 
-        with self.assertRaises(Error):
+        with self.assertRaises(Exception):
             test.validate()
 
         test.field = 'value'
@@ -324,7 +324,7 @@ class ModelTest(TestCase):
 
         alpha = Alpha()
 
-        with self.assertRaises(Error):
+        with self.assertRaises(Exception):
             alpha.validate()
 
     def test_validate_nested_required_direct(self):
@@ -337,7 +337,7 @@ class ModelTest(TestCase):
 
         alpha = Alpha()
 
-        with self.assertRaises(Error):
+        with self.assertRaises(Exception):
             alpha.validate()
 
     def test_validate_controller_function(self):
@@ -805,7 +805,7 @@ class ModelTest(TestCase):
 
         test = Test()
 
-        with self.assertRaises(Error):
+        with self.assertRaises(Exception):
             test.set('field', [ 1, 2, 3 ])
 
     def test_controller_set_direct_invalid(self):
@@ -815,7 +815,7 @@ class ModelTest(TestCase):
 
         test = Test()
 
-        with self.assertRaises(Error):
+        with self.assertRaises(Exception):
             test.set_direct('field', [ 1, 2, 3 ])
 
     def test_operations(self):

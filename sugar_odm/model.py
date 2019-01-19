@@ -45,24 +45,20 @@ class Model(object, metaclass=ModelMeta):
         if self._primary:
             return self.get(self._primary)
         else:
-            raise Error(
-                title = "Cannot Get ID",
-                detail = "Cannot get \"id\" because model {model} has no primary key.".format(
-                    model=self.__class__.__name__
-                )
+            message = "Cannot get \"id\" because model {model} has no primary key.".format(
+                model=self.__class__.__name__
             )
+            raise Exception(message)
 
     @id.setter
     def id(self, value):
         if self._primary:
             self.set(self._primary, value)
         else:
-            raise Error(
-                title = "Cannot Set ID",
-                detail = "Cannot set \"id\" because model {model} has no primary key.".format(
-                    model=self.__class__.__name__
-                )
+            message = "Cannot set \"id\" because model {model} has no primary key.".format(
+                model=self.__class__.__name__
             )
+            raise Exception(message)
 
     @classmethod
     def _check_undefined(cls, kargs):
@@ -74,10 +70,7 @@ class Model(object, metaclass=ModelMeta):
                 model=cls.__name__,
                 fields=','.join(undefined)
             )
-            raise Error(
-                title = 'Model Field Error',
-                detail = message
-            )
+            raise Exception(message)
 
     @classmethod
     def _check_missing(cls, kargs):
@@ -90,10 +83,7 @@ class Model(object, metaclass=ModelMeta):
                 model=cls.__name__,
                 fields=','.join(missing)
             )
-            raise Error(
-                title = 'Model Field Error',
-                detail = message
-            )
+            raise Exception(message)
 
     @classmethod
     def _check_field(cls, key):
@@ -104,10 +94,7 @@ class Model(object, metaclass=ModelMeta):
                 model=cls.__name__,
                 field=key
             )
-            raise Error(
-                title = 'Model Field Error',
-                detail = message
-            )
+            raise Exception(message)
 
         return field
 
@@ -132,38 +119,20 @@ class Model(object, metaclass=ModelMeta):
 
         # field has a controller
         if controller:
-            try:
-                if direct:
-                    controller.check(value)
-                    self._data[key] = field.type(value)
-                    controller.reload()
-                else:
-                    controller.set(value)
-            except Exception as error:
-                raise Error(
-                    title = 'Type Conversion Error',
-                    detail = str(error)
-                )
+            if direct:
+                controller.check(value)
+                self._data[key] = field.type(value)
+                controller.reload()
+            else:
+                controller.set(value)
         # field's type is a string for a method on this object
         elif isinstance(field.type, str):
-            try:
-                self._data[key] = getattr(self, field.type)(value)
-            except Exception as error:
-                raise Error(
-                    title = 'Type Conversion Error',
-                    detail = str(error)
-                )
+            self._data[key] = getattr(self, field.type)(value)
         # field's type is a type, method or function
         elif type(field.type) == type \
             or inspect.isfunction(field.type) \
             or inspect.ismethod(field.type):
-            try:
-                self._data[key] = field.type(value)
-            except ValueError as error:
-                raise Error(
-                    title = 'Type Conversion Error',
-                    detail = str(error)
-                )
+            self._data[key] = field.type(value)
         # field's type is a nested model
         elif inspect.isclass(field.type) \
             and issubclass(field.type, Model):
@@ -172,18 +141,14 @@ class Model(object, metaclass=ModelMeta):
             elif isinstance(value, dict):
                 self._data[key] = field.type(value)
             else:
-                raise Error(
-                    title = 'Model Field Error',
-                    detail = '{model}\'s field "{field}" must be set with a dict or {type} object.'.format(
-                        model=self.__class__.__name__,
-                        field=field.name,
-                        type=field.type.__name__
-                    )
+                message = '{model}\'s field "{field}" must be set with a dict or {type} object.'.format(
+                    model=self.__class__.__name__,
+                    field=field.name,
+                    type=field.type.__name__
                 )
+                raise Exception(message)
         else:
-            raise Error(
-                title = 'Model Field Error'
-            )
+            raise Exception('Model field error.')
 
     def get(self, key, default=None, direct=False):
         field = self._check_field(key)
@@ -384,23 +349,3 @@ class Model(object, metaclass=ModelMeta):
 
     async def delete(self):
         raise NotImplementedError()
-
-
-class Links(Model):
-    about = Field()
-
-
-class Source(Model):
-    pointer = Field()
-    parameter = Field()
-
-
-class Error(Model, Exception):
-    id = Field()
-    links = Field(type=Links)
-    status = Field(type=int)
-    code = Field()
-    title = Field()
-    detail = Field()
-    source = Field(type=Source)
-    meta = Field(type=dict)
