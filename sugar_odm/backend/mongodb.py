@@ -83,33 +83,31 @@ class MongoDBModel(Model):
     @classmethod
     async def exists(cls, id):
         cls._connect()
-        if id:
-            document = await cls._collection.find_one(
-                { '_id': ObjectId(id) },
-                { '_id': True }
-            )
-            if document:
-                return True
-            return False
-        else:
-            message = 'No document ID provided.'
-            raise Exception(message)
+        document = await cls._collection.find_one(
+            { '_id': ObjectId(id) },
+            { '_id': True }
+        )
+        if document:
+            return True
+        return False
 
     @classmethod
-    async def find_one(cls, id):
+    async def find_by_id(cls, id):
         cls._connect()
-        if id:
-            document = await cls._collection.find_one(
-                { '_id': ObjectId(id) }
-            )
-            if document:
-                return cls(document)
-            else:
-                message = 'No document returned.'
-                raise Exception(message)
-        else:
-            message = 'No document ID provided.'
-            raise Exception(message)
+        document = await cls._collection.find_one(
+            { '_id': ObjectId(id) }
+        )
+        if document:
+            return cls(document)
+        return None
+
+    @classmethod
+    async def find_one(cls, *args, **kargs):
+        cls._connect()
+        document = await cls._collection.find_one(*args, **kargs)
+        if document:
+            return cls(document)
+        return None
 
     @classmethod
     async def find(cls, *args, **kargs):

@@ -18,11 +18,15 @@ class Model(object, metaclass=ModelMeta):
         raise NotImplementedError('Model.exists not implemented.')
 
     @classmethod
-    async def find_one(cls, id):
+    async def find_by_id(cls, id):
+        raise NotImplementedError('Model.find_by_id not implemented.')
+
+    @classmethod
+    async def find_one(cls, *args, **kargs):
         raise NotImplementedError('Model.find_one not implemented.')
 
     @classmethod
-    async def find(cls, query={ }):
+    async def find(cls, *args, **kargs):
         raise NotImplementedError('Model.find not implemented.')
 
     @classmethod

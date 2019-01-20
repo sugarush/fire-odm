@@ -195,7 +195,7 @@ class MongoDBModelTest(AsyncTestCase):
 
         self.assertFalse(await test.exists(id))
 
-    async def test_find_one(self):
+    async def test_find_by_id(self):
 
         class Test(MongoDBModel):
             pass
@@ -205,11 +205,44 @@ class MongoDBModelTest(AsyncTestCase):
 
         id = test.id
 
-        test = await Test.find_one(id)
+        test = await Test.find_by_id(id)
 
         self.assertEqual(test.id, id)
 
         await test.delete()
+
+    async def test_find_by_id_no_document_returned(self):
+
+        class Test(MongoDBModel):
+            pass
+
+        test = await Test.find_by_id('1234567890abcdefabcdefab')
+
+        self.assertIs(test, None)
+
+    async def test_find_one(self):
+
+        class Test(MongoDBModel):
+            field = Field()
+
+        test = Test()
+        test.field = 'alpha'
+        await test.save()
+
+        test = await Test.find_one({ 'field': 'alpha' })
+
+        self.assertEqual(test.field, 'alpha')
+
+        await test.delete()
+
+    async def test_find_one_no_document_returned(self):
+
+        class Test(MongoDBModel):
+            pass
+
+        test = await Test.find_one({ 'nonexistent': 'field' })
+
+        self.assertIs(test, None)
 
     async def test_find(self):
 
@@ -254,6 +287,14 @@ class MongoDBModelTest(AsyncTestCase):
         ])
 
         self.assertEqual(len(models), 3)
+
+    async def test_add_invalid(self):
+
+        class Test(MongoDBModel):
+            pass
+
+        with self.assertRaises(Exception):
+            await Test.add('invalid')
 
     async def test_drop(self):
 
