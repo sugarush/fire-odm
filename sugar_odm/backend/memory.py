@@ -29,7 +29,10 @@ class MemoryModel(Model):
 
     @classmethod
     async def find_by_id(cls, id):
-        return cls(cls.db.get(id))
+        data = cls.db.get(id)
+        if data:
+            return cls(data)
+        return None
 
     @classmethod
     async def find_one(cls, *args, **kargs):

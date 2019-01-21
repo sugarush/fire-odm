@@ -186,6 +186,15 @@ class MemoryModelTest(AsyncTestCase):
 
         self.assertEqual(test1.id, test2.id)
 
+    async def test_find_by_id_non_existent(self):
+
+        class Test(MemoryModel):
+            pass
+
+        test = await Test.find_by_id('non-existent')
+
+        self.assertIsNone(test)
+
     async def test_find(self):
 
         class Test(MemoryModel):
