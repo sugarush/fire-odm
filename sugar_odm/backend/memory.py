@@ -37,7 +37,8 @@ class MemoryModel(Model):
 
     @classmethod
     async def find(cls, *args, **kargs):
-        raise NotImplementedError('Model.find not implemented.')
+        for id in cls.db:
+            yield cls(cls.db[id])
 
     @classmethod
     async def add(cls, args):

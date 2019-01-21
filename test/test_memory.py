@@ -185,3 +185,21 @@ class MemoryModelTest(AsyncTestCase):
         test2 = await Test.find_by_id(test1.id)
 
         self.assertEqual(test1.id, test2.id)
+
+    async def test_find(self):
+
+        class Test(MemoryModel):
+            pass
+
+        tests = await Test.add([
+            { },
+            { },
+            { }
+        ])
+
+        count = 0
+
+        async for model in Test.find():
+            count += 1
+
+        self.assertEqual(count, 3)
