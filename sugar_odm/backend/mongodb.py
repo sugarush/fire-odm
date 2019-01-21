@@ -137,6 +137,7 @@ class MongoDBModel(Model):
     async def save(self):
         self._connect()
         self.validate()
+        # XXX: should this be replaced with self.exists(self.id)?
         if self.id:
             data = self.serialize(computed=True, controllers=True, reset=True)
             del data['_id']
