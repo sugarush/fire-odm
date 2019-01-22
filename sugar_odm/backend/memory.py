@@ -35,8 +35,13 @@ class MemoryModel(Model):
         return None
 
     @classmethod
-    async def find_one(cls, *args, **kargs):
-        raise NotImplementedError('Model.find_one not implemented.')
+    async def find_one(cls, query):
+        for id in cls.db:
+            data = cls.db[id].copy()
+            del data['id']
+            if data == query:
+                return cls.db[id]
+        return None
 
     @classmethod
     async def find(cls, *args, **kargs):

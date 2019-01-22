@@ -212,3 +212,17 @@ class MemoryModelTest(AsyncTestCase):
             count += 1
 
         self.assertEqual(count, 3)
+
+    async def test_find_one(self):
+
+        class Test(MemoryModel):
+            field = Field()
+
+        await Test.add([
+            { 'field': 'value' },
+            { 'field': 'value' }
+        ])
+
+        test = await Test.find_one({ 'field': 'value' })
+
+        self.assertTrue(test)
