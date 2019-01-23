@@ -57,6 +57,7 @@ class MemoryModel(Model):
             raise Exception(message)
 
     async def save(self):
+        self.validate()
         if self.id:
             data = self.serialize(computed=True, controllers=True, reset=True)
             self.db[self.id] = data
