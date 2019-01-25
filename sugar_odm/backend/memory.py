@@ -3,6 +3,25 @@ from uuid import uuid4
 from .. model import Model, Field
 
 
+def find(db, query={ }):
+    for _, data in db.items():
+
+        def match(item):
+            _data = data
+            path = item[0]
+            value = item[1]
+            for key in path.split('.'):
+                _data = _data.get(key)
+                if not _data:
+                    return False
+            if not _data == value:
+                return False
+            return True
+
+        if all(map(match, query.items())):
+            yield data
+
+
 class MemoryModel(Model):
 
     @classmethod
@@ -35,9 +54,15 @@ class MemoryModel(Model):
         return None
 
     @classmethod
-    async def find(cls, *args, **kargs):
-        for id in cls.db:
-            yield cls(cls.db[id])
+    async def find_one(cls, query={ }):
+        for data in find(cls.db, query):
+            return cls(data)
+        return None
+
+    @classmethod
+    async def find(cls, query={ }):
+        for data in find(cls.db, query):
+            yield cls(data)
 
     @classmethod
     async def add(cls, args):

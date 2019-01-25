@@ -1,7 +1,6 @@
 from sugar_asynctest import AsyncTestCase
 
-from sugar_odm import Field
-from sugar_odm.backend.memory import MemoryModel
+from sugar_odm import MemoryModel, Model, Field
 
 
 class MemoryModelTest(AsyncTestCase):
@@ -195,7 +194,7 @@ class MemoryModelTest(AsyncTestCase):
 
         self.assertIsNone(test)
 
-    async def test_find(self):
+    async def test_find_all(self):
 
         class Test(MemoryModel):
             pass
@@ -212,3 +211,79 @@ class MemoryModelTest(AsyncTestCase):
             count += 1
 
         self.assertEqual(count, 3)
+
+    async def test_find_specific(self):
+
+        class Test(MemoryModel):
+            field = Field()
+
+        await Test.add([
+            { 'field': 'alpha' },
+            { 'field': 'alpha' },
+            { 'field': 'beta' }
+        ])
+
+        async for test in Test.find({ 'field': 'alpha' }):
+            self.assertEqual(test.field, 'alpha')
+
+    async def test_find_one(self):
+
+        class Test(MemoryModel):
+            field = Field()
+
+        test = Test()
+        test.field = 'value'
+
+        await test.save()
+
+        test = await Test.find_one({ 'field': 'value' })
+
+        self.assertEqual(test.field, 'value')
+
+    async def find_one_multiple(self):
+
+        class Test(MemoryModel):
+            field = Field()
+
+        await Test.add([
+            { 'field': 'value' },
+            { 'field': 'value' }
+        ])
+
+        test = await Test.find_one({ 'field': 'value' })
+
+        self.assertEqual(test.field, 'value')
+
+    async def find_one_nested(self):
+
+        class Beta(Model):
+            field = Field()
+
+        class Alpha(MemoryModel):
+            beta = Field(type=Beta)
+
+        alpha = Alpha()
+        alpha.beta = { 'field': 'value' }
+
+        await alpha.save()
+
+        test = await Alpha.find_one({ 'beta.field': 'value' })
+
+        self.assertEqual(test.beta.field, 'value')
+
+    async def test_find_one_non_existent(self):
+
+        class Test(MemoryModel):
+            field = Field()
+
+        test = Test()
+        test.field = 'alpha'
+
+        await test.save()
+
+        test = await Test.find_one({ 'field': 'beta' })
+
+        self.assertIsNone(test)
+
+    async def test_find_one_projection(self):
+        pass
