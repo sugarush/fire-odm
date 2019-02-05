@@ -60,7 +60,7 @@ class MemoryModel(Model):
         return None
 
     @classmethod
-    async def find(cls, query={ }):
+    async def find(cls, query={ }, **kargs):
         for data in find(cls.db, query):
             yield cls(data)
 
