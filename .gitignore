@@ -1,11 +1,10 @@
 venv
 *.pyc
 .DS_Store
-__pycache__
 .coverage
-mongodb_data
-rethinkdb_data
-rethinkdb
-htmlcov
 .requirements.back
 .profile
+__pycache__
+doc/build
+mongodb_data
+htmlcov
