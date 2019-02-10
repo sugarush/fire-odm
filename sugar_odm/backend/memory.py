@@ -85,10 +85,12 @@ class MemoryModel(Model):
         self.validate()
         if self.id:
             data = self.serialize(computed=True, controllers=True, reset=True)
+            self.update_direct(data)
             self.db[self.id] = data
         else:
             self.id = uuid4()
             data = self.serialize(computed=True, controllers=True, reset=True)
+            self.update_direct(data)
             self.db[self.id] = data
 
     async def load(self):
