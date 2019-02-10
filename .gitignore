@@ -5,6 +5,5 @@ venv
 .requirements.back
 .profile
 __pycache__
-doc/build
 mongodb_data
 htmlcov
