@@ -1,0 +1,16 @@
+baseURL = '/'
+languageCode = 'en-us'
+defaultContentLanguage = 'en'
+
+title = 'Sugar ODM Documentation'
+theme = 'hugo-theme-learn'
+defaultContentLanguageInSubdir = true
+
+# For search functionality
+[outputs]
+  home = [ 'HTML', 'RSS', 'JSON']
+
+[params]
+  description = 'Documentation for Sugar ODM'
+  author = 'Lucifer Avada'
+  themeVariant = 'blue'
