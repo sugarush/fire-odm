@@ -148,7 +148,7 @@ class MongoDBModel(Model):
                 return_document=ReturnDocument.AFTER
             )
             if document:
-                self.update(document)
+                self.update_direct(document)
             else:
                 message = 'No document returned.'
                 raise Exception(message)
