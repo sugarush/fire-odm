@@ -10,7 +10,7 @@ Sugar ODM can be used with the IPython interpreter.
 pip install ipython
 ```
 
-From the IPython interpreter one can easily create, find and delete records:
+From the IPython interpreter one can easily create, read, update and delete records:
 ```python
 from sugar_odm import MemoryModel, Model, Field
 
