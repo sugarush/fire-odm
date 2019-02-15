@@ -10,6 +10,10 @@ from . controller.list import ListController
 class Model(object, metaclass=ModelMeta):
 
     @classmethod
+    async def count(cls):
+        raise NotImplementedError('Model.count not implemented.')
+
+    @classmethod
     async def drop(cls):
         raise NotImplementedError('Model.drop not implemented.')
 
