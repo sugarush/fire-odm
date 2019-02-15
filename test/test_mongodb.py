@@ -179,6 +179,21 @@ class MongoDBModelTest(AsyncTestCase):
 
         self.assertDictEqual(test._data, { })
 
+    async def test_count(self):
+
+        class Test(MongoDBModel):
+            pass
+
+        await Test.drop()
+
+        await Test.add([
+            { },
+            { },
+            { }
+        ])
+
+        self.assertEqual(await Test.count(), 3)
+
     async def test_exists(self):
 
         class Test(MongoDBModel):

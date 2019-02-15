@@ -147,6 +147,19 @@ class MemoryModelTest(AsyncTestCase):
 
             await Test.add('invalid')
 
+    async def test_count(self):
+
+        class Test(MemoryModel):
+            pass
+
+        await Test.add([
+            { },
+            { },
+            { }
+        ])
+
+        self.assertEqual(await Test.count(), 3)
+
     async def test_exists(self):
 
         class Test(MemoryModel):
