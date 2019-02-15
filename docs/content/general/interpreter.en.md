@@ -22,6 +22,7 @@ class User(MemoryModel):
   name = Field(type=Name)
 
 user = User({ 'name': { 'first': 'Alice', 'last': 'Jane' } })
+
 await user.save()
 
 async for user in User.find():
