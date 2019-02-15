@@ -6,7 +6,6 @@ class Field(object):
         self.type = type
         self.primary = primary
         self.required = required
-        self.related = related
         self.indexed = indexed
         self.validated = validated
         self.computed = computed
@@ -14,7 +13,7 @@ class Field(object):
         self.computed_type = computed_type
 
     def __repr__(self):
-        return '<Field name:{name}>'.format(name=self.name)
+        return f'<Field name:{self.name}>'
 
     def __str__(self):
         return repr(self)

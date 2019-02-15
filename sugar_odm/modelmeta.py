@@ -27,10 +27,7 @@ class ModelMeta(type):
 
             if inspect.isclass(field.type) \
                 and isinstance(field.type, ModelMeta):
-                if field.related:
-                    cls._related.append(field)
-                else:
-                    cls._nested.append(field)
+                cls._nested.append(field)
 
             if field.required:
                 cls._required.append(field)

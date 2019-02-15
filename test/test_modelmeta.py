@@ -76,18 +76,6 @@ class ModelMetaTest(TestCase):
 
         self.assertIn(field, Alpha._nested)
 
-    def test_field_model_related(self):
-
-        class Beta(metaclass=ModelMeta):
-            pass
-
-        field = Field(type=Beta, related=True)
-
-        class Alpha(metaclass=ModelMeta):
-            beta = field
-
-        self.assertIn(field, Alpha._related)
-
     def test_field_computed_attribute_missing(self):
 
         with self.assertRaises(AttributeError):
