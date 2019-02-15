@@ -33,7 +33,7 @@ async def main():
 
     async for user in User.find():
         print(user)
-        type = await Type.find_one(user.type)
+        type = await Type.find_by_id(user.type)
         print(type)
 
 loop = asyncio.get_event_loop()
