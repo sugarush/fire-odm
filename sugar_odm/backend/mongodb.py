@@ -77,6 +77,11 @@ class MongoDBModel(Model):
             raise AttributeError('MongoDBModel primary key type must be: str')
 
     @classmethod
+    async def count(cls):
+        cls._connect()
+        return await cls._collection.count_documents({ })
+
+    @classmethod
     async def drop(cls):
         cls._connect()
         await cls._collection.drop()

@@ -36,6 +36,10 @@ class MemoryModel(Model):
         return field
 
     @classmethod
+    async def count(cls):
+        return len(cls.db)
+
+    @classmethod
     async def drop(cls):
         for id in cls.db.copy():
             del cls.db[id]
