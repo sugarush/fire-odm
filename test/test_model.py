@@ -300,6 +300,19 @@ class ModelTest(TestCase):
         with self.assertRaises(Exception):
             test.id
 
+    def test_valid_attribute(self):
+
+        class Test(Model):
+            field = Field(required=True)
+
+        test = Test()
+
+        self.assertFalse(test.valid)
+
+        test.field = 'value'
+
+        self.assertTrue(test.valid)
+
     def test_validate_required(self):
 
         class Test(Model):
