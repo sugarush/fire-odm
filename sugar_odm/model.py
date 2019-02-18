@@ -97,14 +97,6 @@ class Model(object, metaclass=ModelMeta):
             )
             raise Exception(message)
 
-    @property
-    def valid(self):
-        try:
-            self.validate()
-        except:
-            return False
-        return True
-
     @classmethod
     def _check_undefined(cls, kargs):
         undefined = list(filter(lambda karg: \
