@@ -19,6 +19,9 @@ class ListController(Controller):
         self.to_empty = False
         self.to_replace = False
 
+    def __iter__(self):
+        return iter(self.data)
+
     def _check_operation(self):
         if self.to_empty or self.to_replace:
             raise ControllerError('The controller is set to empty or to replace the list. Please call "reset" first.')
