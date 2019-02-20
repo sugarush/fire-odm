@@ -145,7 +145,7 @@ class MongoDBModel(Model):
         self.validate()
         # XXX: should this be replaced with self.exists(self.id)?
         if self.id:
-            data = self.serialize(computed=True, controllers=True, reset=True)
+            data = self.serialize(computed=True, reset=True)
             del data['_id']
             document = await self._collection.find_one_and_update(
                 { '_id': ObjectId(self.id) },
@@ -158,7 +158,7 @@ class MongoDBModel(Model):
                 message = 'No document returned.'
                 raise Exception(message)
         else:
-            data = self.serialize(computed=True, controllers=True, reset=True)
+            data = self.serialize(computed=True, reset=True)
             result = await self._collection.insert_one(data)
             if result:
                 self.id = result.inserted_id

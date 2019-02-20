@@ -4,8 +4,6 @@ import inspect
 from . modelmeta import ModelMeta
 from . field import Field
 
-from . controller.list import ListController
-
 
 class Model(object, metaclass=ModelMeta):
 
@@ -48,12 +46,10 @@ class Model(object, metaclass=ModelMeta):
 
     def __init__(self, dictionary=None, **kargs):
         self._data = { }
-        self._controllers = { }
-        self._create_controllers()
         self.update_direct(dictionary, **kargs)
 
     def __repr__(self):
-        return json.dumps(self.serialize(controllers=True),
+        return json.dumps(self.serialize(),
             indent=4, sort_keys=True)
 
     def __str__(self):
@@ -142,28 +138,10 @@ class Model(object, metaclass=ModelMeta):
             return field[0]
         return None
 
-    def _create_controllers(self):
-        for field in self._fields:
-            if field.type == list or isinstance(field.type, list):
-                self._controllers[field.name] = ListController(self, field)
-
-    def _get_controller(self, key):
-        return self._controllers.get(key)
-
     def set(self, key, value, direct=False):
         field = self._check_field(key)
-        controller = self._get_controller(field.name)
-
-        # field has a controller
-        if controller:
-            if direct:
-                controller.check(value)
-                self._data[key] = field.type(value)
-                controller.reload()
-            else:
-                controller.set(value)
         # field's type is a string for a method on this object
-        elif isinstance(field.type, str):
+        if isinstance(field.type, str):
             self._data[key] = getattr(self, field.type)(value)
         # field's type is a type, method or function
         elif type(field.type) == type \
@@ -189,9 +167,6 @@ class Model(object, metaclass=ModelMeta):
 
     def get(self, key, default=None, direct=False):
         field = self._check_field(key)
-        controller = self._get_controller(field.name)
-        if controller and not direct:
-            return controller
         return self._data.get(key, default)
 
     def update(self, dictionary=None, **kargs):
@@ -234,13 +209,7 @@ class Model(object, metaclass=ModelMeta):
                 model = self._data.get(field.name, field.type())
                 model.validate()
             elif field.validated:
-                controller = self._get_controller(field.name)
-                if controller:
-                    if isinstance(field.validated, str):
-                        getattr(self, field.validated)(controller.serialize())
-                    else: # field.validated is not a string
-                        field.validated(controller.serialize())
-                elif field.computed:
+                if field.computed:
                     value = self.get(field.name)
                     if field.computed_type:
                         if field.computed_empty and value:
@@ -306,21 +275,14 @@ class Model(object, metaclass=ModelMeta):
                             value = field.type(value)
                             field.validated(value)
 
-    def serialize(self, computed=False, controllers=False, reset=False):
+    def serialize(self, computed=False, reset=False):
         obj = self._data.copy()
 
         for field in self._fields:
-            controller = self._get_controller(field.name)
-            if controllers and controller:
-                obj[field.name] = controller.serialize(reset=reset)
-            elif inspect.isclass(field.type) \
+            if inspect.isclass(field.type) \
                 and issubclass(field.type, Model):
                 model = self.get_direct(field.name, field.type())
-                data = model.serialize(
-                    computed=computed,
-                    controllers=controllers,
-                    reset=reset
-                )
+                data = model.serialize(computed=computed, reset=reset)
                 if data: obj[field.name] = data
             elif computed and field.computed:
                 if field.computed_empty \
@@ -348,12 +310,7 @@ class Model(object, metaclass=ModelMeta):
         data = { }
 
         for field in self._fields:
-            controller = self._get_controller(field.name)
-            if controller:
-                operations = controller.operations(reset=reset)
-                if operations:
-                    data[field.name] = operations
-            elif inspect.isclass(field.type) \
+            if inspect.isclass(field.type) \
                 and issubclass(field.type, Model):
                 model = self.get_direct(field.name, field.type())
                 data[field.name] = model.operations(reset=reset)
