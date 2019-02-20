@@ -45,17 +45,6 @@ class TestListController(TestCase):
         with self.assertRaises(ControllerError):
             test.field._check_operation()
 
-    def test_check_operation_to_replace(self):
-
-        class Test(Model):
-            field = Field(type=list)
-
-        test = Test()
-        test.field.to_replace = True
-
-        with self.assertRaises(ControllerError):
-            test.field._check_operation()
-
     def test_check_value_untyped(self):
 
         class Test(Model):
@@ -119,16 +108,6 @@ class TestListController(TestCase):
         test.field.empty()
 
         self.assertEqual(test.field.serialize(), [ ])
-
-    def test_serialize_replace(self):
-
-        class Test(Model):
-            field = Field(type=list)
-
-        test = Test(field=[ 1, 2, 3])
-        test.field = [ 4, 5, 6 ]
-
-        self.assertEqual(test.field.serialize(), [ 4, 5, 6 ])
 
     def test_serialize_append(self):
 
@@ -204,17 +183,6 @@ class TestListController(TestCase):
 
         self.assertEqual(test.field.serialize(), [ 1, 2, 3 ])
 
-    def test_reset_replace(self):
-
-        class Test(Model):
-            field = Field(type=list)
-
-        test = Test(field=[ 1, 2, 3 ])
-        test.field = [ 4, 5, 6 ]
-        test.field.reset()
-
-        self.assertEqual(test.field.serialize(), [ 1, 2, 3 ])
-
     def test_operation_empty(self):
 
         class Test(Model):
@@ -224,16 +192,6 @@ class TestListController(TestCase):
         test.field.empty()
 
         self.assertDictEqual(test.field.operations(), { '$:list:empty': True })
-
-    def test_operation_replace(self):
-
-        class Test(Model):
-            field = Field(type=list)
-
-        test = Test(field=[ 1, 2, 3 ])
-        test.field = [ 3, 4, 5 ]
-
-        self.assertDictEqual(test.field.operations(), { '$:list:replace': [ 3, 4, 5 ] })
 
     def test_operation_append(self):
 
