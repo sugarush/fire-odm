@@ -17,14 +17,13 @@ class ListController(Controller):
         self.to_remove = [ ]
         self.to_remove_all = [ ]
         self.to_empty = False
-        self.to_replace = False
 
     def __iter__(self):
         return iter(self.data)
 
     def _check_operation(self):
-        if self.to_empty or self.to_replace:
-            raise ControllerError('The controller is set to empty or to replace the list. Please call "reset" first.')
+        if self.to_empty:
+            raise ControllerError('The controller is set to empty the list. Please call "reset" first.')
 
     def _check_value(self, value):
         if self.types:
@@ -42,10 +41,6 @@ class ListController(Controller):
         if self.to_empty:
             if reset: self.reset()
             return [ ]
-
-        if self.to_replace:
-            if reset: self.reset()
-            return self.data
 
         data = self.data.copy()
 
@@ -72,11 +67,6 @@ class ListController(Controller):
             if reset: self.reset()
             return data
 
-        if self.to_replace:
-            data['$:list:replace'] = self.data.copy()
-            if reset: self.reset()
-            return data
-
         if self.to_append:
             data['$:list:append'] = self.to_append.copy()
 
@@ -93,10 +83,8 @@ class ListController(Controller):
 
     def set(self, iterable):
         self._check_values(iterable)
+        self.model.set_direct(self.field.name, iterable)
         self.reset()
-        if len(self.data) > 0:
-            self.to_replace = True
-        self.data = self.field.type(iterable)
 
     def reload(self):
         self.data = self.model.get_direct(self.field.name, [ ]).copy()
