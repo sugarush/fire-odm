@@ -350,7 +350,9 @@ class Model(object, metaclass=ModelMeta):
         for field in self._fields:
             controller = self._get_controller(field.name)
             if controller:
-                data[field.name] = controller.operations(reset=reset)
+                operations = controller.operations(reset=reset)
+                if operations:
+                    data[field.name] = operations
             elif inspect.isclass(field.type) \
                 and issubclass(field.type, Model):
                 model = self.get_direct(field.name, field.type())
