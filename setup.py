@@ -10,8 +10,7 @@ setup(
     url='https://github.com/sugarush/sugar-odm',
     packages=[
         'sugar_odm',
-        'sugar_odm.backend',
-        'sugar_odm.controller'
+        'sugar_odm.backend'
     ],
     description='An async ODM for MongoDB.',
     install_requires=[
