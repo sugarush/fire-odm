@@ -59,7 +59,7 @@ class MongoDBModelTest(AsyncTestCase):
     def test_connect_connection_options(self):
 
         class Test(MongoDBModel):
-            __connection_options__ = {
+            __connection__ = {
                 'host': '127.0.0.1'
             }
 
@@ -78,10 +78,10 @@ class MongoDBModelTest(AsyncTestCase):
             pass
 
         class Gamma(MongoDBModel):
-            __connection_options__ = { 'host': '127.0.0.1' }
+            __connection__ = { 'host': '127.0.0.1' }
 
         class Delta(MongoDBModel):
-            __connection_options__ = { 'host': '127.0.0.1' }
+            __connection__ = { 'host': '127.0.0.1' }
 
         Alpha._connect()
         Beta._connect()
@@ -105,7 +105,7 @@ class MongoDBModelTest(AsyncTestCase):
 
         class Test(MongoDBModel):
 
-            __database_options__ = {
+            __database__ = {
                 'name': 'some_database'
             }
 
@@ -125,7 +125,7 @@ class MongoDBModelTest(AsyncTestCase):
     def test_connect_collection_options(self):
 
         class Test(MongoDBModel):
-            __collection_options__ = {
+            __collection__ = {
                 'name': 'some_collection'
             }
 

@@ -46,19 +46,19 @@ class MongoDBModel(Model):
         if cls.__name__ == 'MongoDBModel':
             return
 
-        if not hasattr(cls, '__connection_options__'):
-            cls.__connection_options__ = { }
+        if not hasattr(cls, '__connection__'):
+            cls.__connection__ = { }
 
-        if not hasattr(cls, '__database_options__'):
-            cls.__database_options__ = { 'name': 'test' }
+        if not hasattr(cls, '__database__'):
+            cls.__database__ = { 'name': 'test' }
 
-        if not hasattr(cls, '__collection_options__'):
-            cls.__collection_options__ = { 'name': cls._table }
+        if not hasattr(cls, '__collection__'):
+            cls.__collection__ = { 'name': cls._table }
 
-        cls._connection = MongoDB.connect(**cls.__connection_options__)
-        cls._database = cls._connection.get_database(**cls.__database_options__)
+        cls._connection = MongoDB.connect(**cls.__connection__)
+        cls._database = cls._connection.get_database(**cls.__database__)
         cls._collection = \
-            cls._database.get_collection(**cls.__collection_options__)
+            cls._database.get_collection(**cls.__collection__)
 
     @classmethod
     def default_primary(cls):
