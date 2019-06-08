@@ -1,4 +1,5 @@
 from unittest import TestCase
+import asyncio
 
 from sugar_asynctest import AsyncTestCase
 
@@ -14,6 +15,12 @@ class MongoDBTest(TestCase):
         c = MongoDB.connect(host='localhost', ssl=False)
         self.assertIs(a, b)
         self.assertIsNot(a, c)
+
+    def test_change_loop(self):
+        connection = MongoDB.connect()
+        loop = asyncio.get_event_loop()
+        MongoDB.set_event_loop(loop)
+        self.assertDictEqual(MongoDB.connections, { })
 
 
 class MongoDBModelTest(AsyncTestCase):

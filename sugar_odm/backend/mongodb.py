@@ -32,7 +32,7 @@ class MongoDB(object):
         cls.loop = loop
         for connection in cls.connections:
             cls.connections[connection].close()
-            del cls.connections[connection]
+        cls.connections = { }
 
 
 class MongoDBModel(Model):
