@@ -43,9 +43,6 @@ class MongoDBModel(Model):
 
     @classmethod
     def _connect(cls):
-        if cls._connection:
-            return
-
         if cls.__name__ == 'MongoDBModel':
             return
 
@@ -58,7 +55,12 @@ class MongoDBModel(Model):
         if not hasattr(cls, '__collection__'):
             cls.__collection__ = { 'name': cls._table }
 
-        cls._connection = MongoDB.connect(**cls.__connection__)
+        connection = MongoDB.connect(**cls.__connection__)
+
+        if cls._connection is connection:
+            return
+
+        cls._connection = connection
         cls._database = cls._connection.get_database(**cls.__database__)
         cls._collection = \
             cls._database.get_collection(**cls.__collection__)
