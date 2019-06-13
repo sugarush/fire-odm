@@ -1,8 +1,12 @@
 import json
 import inspect
 
-from . modelmeta import ModelMeta
+from . modelmeta import ModelMeta, get_class
 from . field import Field
+
+from . controller.has_one import HasOne
+from . controller.has_many import HasMany
+from . controller.belongs_to import BelongsTo
 
 
 class Model(object, metaclass=ModelMeta):
@@ -44,8 +48,34 @@ class Model(object, metaclass=ModelMeta):
     async def delete(self):
         raise NotImplementedError('Model.delete not implemented.')
 
+    def populate_relationships(self):
+        for field in self._has_one:
+            if not issubclass(type(field.has_one), ModelMeta):
+                field.has_one = get_class(field.has_one)
+        for field in self._has_many:
+            if not issubclass(type(field.has_many), ModelMeta):
+                field.type = list
+                field.has_many = get_class(field.has_many)
+        for field in self._belongs_to:
+            if not issubclass(type(field.belongs_to), ModelMeta):
+                field.belongs_to = get_class(field.belongs_to)
+
+    def populate_controllers(self):
+        self._controllers = { }
+        for field in self._has_one:
+            self._controllers[field.name] = HasOne(self, field)
+        for field in self._has_many:
+            self._controllers[field.name] = HasMany(self, field)
+        for field in self._belongs_to:
+            self._controllers[field.name] = BelongsTo(self, field)
+
+    def get_controller(self, name):
+        return self._controllers.get(name)
+
     def __init__(self, dictionary=None, **kargs):
         self._data = { }
+        self.populate_relationships()
+        self.populate_controllers()
         self.update_direct(dictionary, **kargs)
 
     def __repr__(self):
@@ -140,8 +170,15 @@ class Model(object, metaclass=ModelMeta):
 
     def set(self, key, value, direct=False):
         field = self._check_field(key)
+        controller = self.get_controller(field.name)
+        if controller:
+            if direct:
+                controller.check(value)
+                self._data[key] = value
+            else:
+                controller.set(value)
         # field's type is a string for a method on this object
-        if isinstance(field.type, str):
+        elif isinstance(field.type, str):
             self._data[key] = getattr(self, field.type)(value)
         # field's type is a type, method or function
         elif type(field.type) == type \
@@ -167,6 +204,11 @@ class Model(object, metaclass=ModelMeta):
 
     def get(self, key, default=None, direct=False):
         field = self._check_field(key)
+        controller = self.get_controller(field.name)
+        if controller:
+            if direct:
+                return self._data.get(key, default)
+            return controller
         return self._data.get(key, default)
 
     def update(self, dictionary=None, **kargs):

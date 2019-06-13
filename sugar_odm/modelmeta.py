@@ -3,10 +3,24 @@ import inflection
 
 from . field import Field
 
+
+__registry__ = { }
+
+def register_class(name, cls):
+    global __registry__
+    __registry__[name] = cls
+
+def get_class(name):
+    global __registry__
+    return __registry__[name]
+
+
 class ModelMeta(type):
 
     def __init__(cls, name, bases, attrs):
         super(ModelMeta, cls).__init__(name, bases, attrs)
+
+        register_class(cls.__name__, cls)
 
         cls._table = inflection.tableize(cls.__name__)
 
@@ -18,6 +32,10 @@ class ModelMeta(type):
         cls._validated = [ ]
         cls._computed = [ ]
         cls._dynamic = [ ]
+        cls._has_one = [ ]
+        cls._has_many = [ ]
+        cls._belongs_to = [ ]
+        cls._auto_delete = [ ]
 
         members = inspect.getmembers(cls, lambda item: isinstance(item, Field))
 
@@ -45,6 +63,19 @@ class ModelMeta(type):
                 or inspect.isfunction(field.type) \
                 or inspect.ismethod(field.type):
                 cls._dynamic.append(field)
+
+            if field.has_one:
+                cls._has_one.append(field)
+
+            if field.has_many:
+                field.type = list
+                cls._has_many.append(field)
+
+            if field.belongs_to:
+                cls._belongs_to.append(field)
+
+            if field.auto_delete:
+                cls._auto_delete.append(field)
 
             cls._fields.append(field)
 

@@ -6,6 +6,8 @@ from pymongo import ReturnDocument
 from .. util import serialize
 from .. model import Model, Field
 
+from . backend import RelationshipMixin
+
 
 class MongoDB(object):
 
@@ -35,7 +37,7 @@ class MongoDB(object):
         cls.connections = { }
 
 
-class MongoDBModel(Model):
+class MongoDBModel(Model, RelationshipMixin):
 
     _connection = None
     _database = None
@@ -200,6 +202,7 @@ class MongoDBModel(Model):
                     raise Exception(message)
                 else:
                     self._data = { }
+                    await self.delete_related()
             else:
                 message = 'Collection operation result is a falsy value.'
                 raise Exception(message)

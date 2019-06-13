@@ -1,3 +1,5 @@
+from unittest import skip
+
 from sugar_asynctest import AsyncTestCase
 
 from sugar_odm import MemoryModel, Model, Field
@@ -297,6 +299,3 @@ class MemoryModelTest(AsyncTestCase):
         test = await Test.find_one({ 'field': 'beta' })
 
         self.assertIsNone(test)
-
-    async def test_find_one_projection(self):
-        pass

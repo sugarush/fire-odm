@@ -1,10 +1,13 @@
-from uuid import uuid4
+from copy import copy
+
+from bson import ObjectId
 
 from .. model import Model, Field
+from . backend import RelationshipMixin
 
 
 def find(db, query={ }):
-    for _, data in db.items():
+    for _, data in copy(db).items():
 
         def match(item):
             _data = data
@@ -22,7 +25,7 @@ def find(db, query={ }):
             yield data
 
 
-class MemoryModel(Model):
+class MemoryModel(Model, RelationshipMixin):
 
     @classmethod
     def initialize(cls):
@@ -92,7 +95,7 @@ class MemoryModel(Model):
             self.update_direct(data)
             self.db[self.id] = data
         else:
-            self.id = uuid4()
+            self.id = str(ObjectId())
             data = self.serialize(computed=True, reset=True)
             self.update_direct(data)
             self.db[self.id] = data
@@ -113,6 +116,7 @@ class MemoryModel(Model):
         if self.id:
             if self.id in self.db:
                 del self.db[self.id]
+                await self.delete_related()
                 self._data = { }
             else:
                 message = 'No document for ID: {id}'.format(id=self.id)
