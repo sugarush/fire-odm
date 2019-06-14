@@ -38,7 +38,7 @@ class HasMany(Controller):
             '$pull': { self.field.name: value }
         })
 
-    async def pop(self, index=-1):
+    async def pop(self, index=1):
         await self.model.operation({
             '$pop': { self.field.name: index }
         })
