@@ -42,10 +42,8 @@ class RelationshipMixin(object):
                         }
                     })
                     async for model in models:
-                        print(related_field.name, self.id)
                         await model.operation({
                             '$pull': {
                                 related_field.name: self.id
                             }
                         })
-                        await model.load()
