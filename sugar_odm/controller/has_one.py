@@ -1,6 +1,6 @@
 from bson import ObjectId
 
-from .. modelmeta import ModelMeta
+from .. modelmeta import ModelMeta, get_class
 
 from . controller import Controller
 
@@ -9,8 +9,8 @@ class HasOne(Controller):
 
     @property
     async def object(self):
-        return await self.field.has_one.find_one({
-            self.field.has_one._primary: \
+        return await get_class(self.field.has_one).find_one({
+            get_class(self.field.has_one)._primary: \
                 ObjectId(self.model._data[self.field.name])
         })
 

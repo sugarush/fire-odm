@@ -1,6 +1,6 @@
 from bson import ObjectId
 
-from .. modelmeta import ModelMeta
+from .. modelmeta import ModelMeta, get_class
 
 from . controller import Controller
 
@@ -9,8 +9,8 @@ class BelongsTo(Controller):
 
     @property
     async def object(self):
-        return await self.field.belongs_to.find_one({
-            self.field.belongs_to._primary: \
+        return await get_class(self.field.belongs_to).find_one({
+            get_class(self.field.belongs_to)._primary: \
                 ObjectId(self.model._data[self.field.name])
         })
 

@@ -1,6 +1,6 @@
 from bson import ObjectId
 
-from .. modelmeta import ModelMeta
+from .. modelmeta import ModelMeta, get_class
 
 from . controller import Controller
 
@@ -15,8 +15,8 @@ class HasMany(Controller):
     @property
     async def objects(self):
         for id in self.model._data[self.field.name]:
-            model = await self.field.has_many.find_one({
-                self.field.has_many._primary: ObjectId(id)
+            model = await get_class(self.field.has_many).find_one({
+                get_class(self.field.has_many)._primary: ObjectId(id)
             })
             if not model:
                 continue
