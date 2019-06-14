@@ -82,32 +82,6 @@ class ControllerTest(AsyncTestCase):
 
         self.assertEqual(len(betas), 1)
 
-    async def test_has_one_set(self):
-
-        class Alpha(MongoDBModel):
-            beta = Field(has_one='Beta')
-
-        class Beta(MongoDBModel):
-            alpha = Field(belongs_to='Alpha', auto_delete=True)
-
-        await Alpha.drop()
-        await Beta.drop()
-
-        alpha = Alpha()
-        beta = Beta()
-
-        await alpha.save()
-        await beta.save()
-
-        alpha.beta = beta
-        beta.alpha = alpha
-
-        await alpha.save()
-        await beta.save()
-
-        self.assertEqual((await alpha.beta.object).id, beta.id)
-        self.assertEqual((await beta.alpha.object).id, alpha.id)
-
     async def test_has_many_set(self):
 
         class Alpha(MongoDBModel):
@@ -140,10 +114,10 @@ class ControllerTest(AsyncTestCase):
         self.assertIn(beta1.id, betas)
         self.assertIn(beta2.id, betas)
 
-    async def test_delete_has_one(self):
+    async def test_has_many_create(self):
 
         class Alpha(MongoDBModel):
-            beta = Field(has_one='Beta')
+            beta = Field(has_many='Beta')
 
         class Beta(MongoDBModel):
             alpha = Field(belongs_to='Alpha', auto_delete=True)
@@ -152,22 +126,16 @@ class ControllerTest(AsyncTestCase):
         await Beta.drop()
 
         alpha = Alpha()
-        beta = Beta()
 
         await alpha.save()
-        await beta.save()
 
-        alpha.beta = beta
-        beta.alpha = alpha
+        await alpha.beta.create()
 
-        await alpha.save()
-        await beta.save()
 
-        await alpha.delete()
+        async for beta in alpha.beta.objects:
+            self.assertEqual((await beta.alpha.object).id, alpha.id)
 
-        self.assertIsNone(await Beta.find_one({ 'id': beta.id }))
-
-    async def test_delete_has_many(self):
+    async def test_has_many_delete(self):
 
         class Alpha(MongoDBModel):
             beta = Field(has_many='Beta')
@@ -199,3 +167,56 @@ class ControllerTest(AsyncTestCase):
         models = [ model async for model in Beta.find() ]
 
         self.assertEqual([ ], models)
+
+    async def test_has_one_set(self):
+
+        class Alpha(MongoDBModel):
+            beta = Field(has_one='Beta')
+
+        class Beta(MongoDBModel):
+            alpha = Field(belongs_to='Alpha', auto_delete=True)
+
+        await Alpha.drop()
+        await Beta.drop()
+
+        alpha = Alpha()
+        beta = Beta()
+
+        await alpha.save()
+        await beta.save()
+
+        alpha.beta = beta
+        beta.alpha = alpha
+
+        await alpha.save()
+        await beta.save()
+
+        self.assertEqual((await alpha.beta.object).id, beta.id)
+        self.assertEqual((await beta.alpha.object).id, alpha.id)
+
+    async def test_has_one_delete(self):
+
+        class Alpha(MongoDBModel):
+            beta = Field(has_one='Beta')
+
+        class Beta(MongoDBModel):
+            alpha = Field(belongs_to='Alpha', auto_delete=True)
+
+        await Alpha.drop()
+        await Beta.drop()
+
+        alpha = Alpha()
+        beta = Beta()
+
+        await alpha.save()
+        await beta.save()
+
+        alpha.beta = beta
+        beta.alpha = alpha
+
+        await alpha.save()
+        await beta.save()
+
+        await alpha.delete()
+
+        self.assertIsNone(await Beta.find_one({ 'id': beta.id }))

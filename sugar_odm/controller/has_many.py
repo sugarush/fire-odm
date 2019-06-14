@@ -12,6 +12,14 @@ class HasMany(Controller):
         if not isinstance(self.model._data.get(self.field.name), list):
             self.model._data[self.field.name] = [ ]
 
+    async def create(self, *args, **kargs):
+        model = get_class(self.field.has_many)(*args, **kargs)
+        for field in model._belongs_to:
+            if get_class(field.belongs_to) == self.model.__class__:
+                model.set(field.name, self.model.id)
+        await model.save()
+        await self.push(model.id)
+
     @property
     async def objects(self):
         for id in self.model._data[self.field.name]:
