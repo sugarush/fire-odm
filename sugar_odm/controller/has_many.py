@@ -15,9 +15,28 @@ class HasMany(Controller):
     @property
     async def objects(self):
         for id in self.model._data[self.field.name]:
-            yield await self.field.has_many.find_one({
+            model = await self.field.has_many.find_one({
                 self.field.has_many._primary: ObjectId(id)
             })
+            if not model:
+                continue
+            yield model
+
+    async def push(self, value):
+        self._check(value)
+        if isinstance(type(value), ModelMeta):
+            value = value.id
+        await self.model.operation({
+            '$push': { self.field.name: value }
+        })
+
+    async def pull(self, value):
+        self._check(value)
+        if isinstance(type(value), ModelMeta):
+            value = value.id
+        await self.model.operation({
+            '$pull': { self.field.name: value }
+        })
 
     def _check(self, value):
         if isinstance(value, str):

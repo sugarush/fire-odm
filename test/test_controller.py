@@ -8,6 +8,54 @@ class ControllerTest(AsyncTestCase):
 
     default_loop = True
 
+    async def test_has_many_push(self):
+
+        class Alpha(MongoDBModel):
+            beta = Field(has_many='Beta')
+
+        class Beta(MongoDBModel):
+            alpha = Field(belongs_to='Alpha')
+
+        await Alpha.drop()
+        await Beta.drop()
+
+        alpha = Alpha()
+        beta = Beta()
+
+        await alpha.save()
+        await beta.save()
+
+        await alpha.beta.push(beta)
+
+        betas = [ model.id async for model in alpha.beta.objects ]
+
+        self.assertIn(beta.id, betas)
+
+    async def test_has_many_pull(self):
+
+        class Alpha(MongoDBModel):
+            beta = Field(has_many='Beta')
+
+        class Beta(MongoDBModel):
+            alpha = Field(belongs_to='Alpha')
+
+        await Alpha.drop()
+        await Beta.drop()
+
+        alpha = Alpha()
+        beta = Beta()
+
+        await alpha.save()
+        await beta.save()
+
+        await alpha.beta.push(beta)
+
+        await alpha.beta.pull(beta)
+
+        betas = [ model.id async for model in alpha.beta.objects ]
+
+        self.assertEqual([ ], betas)
+
     async def test_has_one_set(self):
 
         class Alpha(MongoDBModel):
