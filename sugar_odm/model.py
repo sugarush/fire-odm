@@ -74,8 +74,10 @@ class Model(object, metaclass=ModelMeta):
 
     def __init__(self, dictionary=None, **kargs):
         self._data = { }
-        self.populate_relationships()
-        self.populate_controllers()
+        if hasattr(self, 'populate_relationships'):
+            self.populate_relationships()
+        if hasattr(self, 'populate_controllers'):
+            self.populate_controllers()
         self.update_direct(dictionary, **kargs)
 
     def __repr__(self):

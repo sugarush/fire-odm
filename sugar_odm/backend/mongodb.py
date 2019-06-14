@@ -150,6 +150,12 @@ class MongoDBModel(Model, RelationshipMixin):
             message = 'Invalid argument to MongoDBModel.add: must be a list or dict.'
             raise Exception(message)
 
+    async def operation(self, query):
+        await self._collection.find_one_and_update({
+            '_id': ObjectId(self.id)
+        }, query)
+        await self.load()
+
     async def save(self):
         self._connect()
         self.validate()
@@ -183,6 +189,7 @@ class MongoDBModel(Model, RelationshipMixin):
             document = await self._collection \
                 .find_one({ '_id': ObjectId(self.id) })
             if document:
+                self._data = { }
                 self.update(document)
             else:
                 message = 'No document returned.'
@@ -201,8 +208,8 @@ class MongoDBModel(Model, RelationshipMixin):
                     message = 'Deleted count is zero.'
                     raise Exception(message)
                 else:
-                    self._data = { }
                     await self.delete_related()
+                    self._data = { }
             else:
                 message = 'Collection operation result is a falsy value.'
                 raise Exception(message)

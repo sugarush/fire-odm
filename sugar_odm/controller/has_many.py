@@ -12,6 +12,13 @@ class HasMany(Controller):
         if not isinstance(self.model._data.get(self.field.name), list):
             self.model._data[self.field.name] = [ ]
 
+    @property
+    async def objects(self):
+        for id in self.model._data[self.field.name]:
+            yield await self.field.has_many.find_one({
+                self.field.has_many._primary: ObjectId(id)
+            })
+
     def _check(self, value):
         if isinstance(value, str):
             _ = ObjectId(value)

@@ -334,3 +334,17 @@ class MongoDBModelTest(AsyncTestCase):
         await Test.drop()
 
         self.assertFalse(await Test.exists(id))
+
+    async def test_operation(self):
+
+        class Test(MongoDBModel):
+            field = Field(type=int)
+
+        await Test.drop()
+
+        test = Test(field=1)
+        await test.save()
+
+        await test.operation({ '$inc': { 'field': 1 } })
+
+        self.assertEqual(test.field, 2)

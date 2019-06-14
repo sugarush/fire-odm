@@ -22,3 +22,30 @@ class RelationshipMixin(object):
                     })
                     async for model in models:
                         await model.delete()
+
+        for field in self._belongs_to:
+
+            for related_field in field.belongs_to._has_one:
+                if related_field.has_one == self.__class__:
+                    model = await field.belongs_to.find_one({
+                        related_field.name: self.id
+                    })
+                    if model:
+                        model.set_direct(related_field.name, None)
+                        await model.save()
+
+            for related_field in field.belongs_to._has_many:
+                if related_field.has_many == self.__class__:
+                    models = field.belongs_to.find({
+                        related_field.name: {
+                            '$all': [ self.id ]
+                        }
+                    })
+                    async for model in models:
+                        print(related_field.name, self.id)
+                        await model.operation({
+                            '$pull': {
+                                related_field.name: self.id
+                            }
+                        })
+                        await model.load()

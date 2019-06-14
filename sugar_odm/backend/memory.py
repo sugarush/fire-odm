@@ -25,7 +25,7 @@ def find(db, query={ }):
             yield data
 
 
-class MemoryModel(Model, RelationshipMixin):
+class MemoryModel(Model):
 
     @classmethod
     def initialize(cls):
@@ -116,7 +116,6 @@ class MemoryModel(Model, RelationshipMixin):
         if self.id:
             if self.id in self.db:
                 del self.db[self.id]
-                await self.delete_related()
                 self._data = { }
             else:
                 message = 'No document for ID: {id}'.format(id=self.id)
