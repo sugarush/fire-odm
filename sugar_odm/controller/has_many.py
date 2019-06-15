@@ -12,13 +12,18 @@ class HasMany(Controller):
         if not isinstance(self.model._data.get(self.field.name), list):
             self.model._data[self.field.name] = [ ]
 
-    async def create(self, *args, **kargs):
-        model = get_class(self.field.has_many)(*args, **kargs)
+    def _check(self, value):
+        if isinstance(value, str):
+            _ = ObjectId(value)
+        elif isinstance(type(value), ModelMeta):
+            if not value.id:
+                raise Exception(f'{type(value)} has not been saved.')
+
+    async def _set_related(self, model):
         for field in model._belongs_to:
             if get_class(field.belongs_to) == self.model.__class__:
                 model.set(field.name, self.model.id)
         await model.save()
-        await self.push(model.id)
 
     @property
     async def objects(self):
@@ -30,9 +35,16 @@ class HasMany(Controller):
                 continue
             yield model
 
+    async def create(self, *args, **kargs):
+        model = get_class(self.field.has_many)(*args, **kargs)
+        await self._set_related(model)
+        await self.push(model.id)
+        return model
+
     async def push(self, value):
         self._check(value)
         if isinstance(type(value), ModelMeta):
+            await self._set_related(value)
             value = value.id
         await self.model.operation({
             '$push': { self.field.name: value }
@@ -41,7 +53,9 @@ class HasMany(Controller):
     async def pull(self, value):
         self._check(value)
         if isinstance(type(value), ModelMeta):
+            _value = value
             value = value.id
+            await _value.delete()
         await self.model.operation({
             '$pull': { self.field.name: value }
         })
@@ -50,13 +64,6 @@ class HasMany(Controller):
         await self.model.operation({
             '$pop': { self.field.name: index }
         })
-
-    def _check(self, value):
-        if isinstance(value, str):
-            _ = ObjectId(value)
-        elif isinstance(type(value), ModelMeta):
-            if not value.id:
-                raise Exception(f'{type(value)} has not been saved.')
 
     def check(self, iterable):
         for value in iterable:
