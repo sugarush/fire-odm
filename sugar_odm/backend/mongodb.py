@@ -151,6 +151,7 @@ class MongoDBModel(Model, RelationshipMixin):
             raise Exception(message)
 
     async def operation(self, query):
+        self._connect()
         await self._collection.find_one_and_update({
             '_id': ObjectId(self.id)
         }, query)
