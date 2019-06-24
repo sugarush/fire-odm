@@ -120,8 +120,6 @@ class MongoDBModel(Model, RelationshipMixin):
     @classmethod
     async def find_one(cls, *args, **kargs):
         cls._connect()
-        if kargs.get('_id'):
-            kargs['_id'] = ObjectId(kargs['_id'])
         document = await cls._collection.find_one(*args, **kargs)
         if document:
             return cls(document)
@@ -130,8 +128,6 @@ class MongoDBModel(Model, RelationshipMixin):
     @classmethod
     async def find(cls, *args, **kargs):
         cls._connect()
-        if kargs.get('_id'):
-            kargs['_id'] = ObjectId(kargs['_id'])
         cursor = cls._collection.find(*args, **kargs)
         async for document in cursor:
             yield cls(document)
