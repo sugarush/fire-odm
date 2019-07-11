@@ -30,10 +30,14 @@ class MongoDB(object):
         return cls.connections[key]
 
     @classmethod
-    def set_event_loop(cls, loop):
-        cls.loop = loop
+    def close(cls):
         for connection in cls.connections:
             cls.connections[connection].close()
+
+    @classmethod
+    def set_event_loop(cls, loop):
+        cls.loop = loop
+        cls.close()
         cls.connections = { }
 
 
