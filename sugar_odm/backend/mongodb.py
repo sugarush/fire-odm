@@ -188,11 +188,14 @@ class MongoDBModel(Model, RelationshipMixin):
                 message = 'Inserted ID not available or non-existent.'
                 raise Exception(message)
 
-    async def load(self):
+    async def load(self, projection=None):
         self._connect()
         if self.id:
             document = await self._collection \
-                .find_one({ '_id': ObjectId(self.id) })
+                .find_one(
+                    { '_id': ObjectId(self.id) },
+                    projection=projection
+                )
             if document:
                 self._data = { }
                 self.update(document)

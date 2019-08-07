@@ -266,6 +266,32 @@ class MongoDBModelTest(AsyncTestCase):
 
         self.assertIs(test, None)
 
+    async def test_find_one_projection(self):
+
+        class Alpha(MongoDBModel):
+            field = Field()
+
+        class Beta(MongoDBModel):
+            alpha = Field(type=Alpha)
+            another_field = Field()
+
+        beta = Beta()
+        beta.alpha = { 'field': 'testing' }
+        beta.another_field = 'value'
+        await beta.save()
+
+        beta = await Beta.find_one(
+            { 'another_field': 'value' },
+            projection = {
+                '_id': 0,
+                'alpha.field': 1
+            }
+        )
+
+        self.assertIsNone(beta.id)
+        self.assertIsNone(beta.another_field)
+        self.assertEqual(beta.alpha.field, 'testing')
+
     async def test_find(self):
 
         class Test(MongoDBModel):
