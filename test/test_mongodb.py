@@ -3,7 +3,7 @@ import asyncio
 
 from sugar_asynctest import AsyncTestCase
 
-from sugar_odm import Field
+from sugar_odm import Model, Field
 from sugar_odm.backend.mongodb import MongoDB, MongoDBModel
 
 
@@ -173,6 +173,56 @@ class MongoDBModelTest(AsyncTestCase):
 
         await test.delete()
 
+    async def test_load(self):
+
+        class Test(MongoDBModel):
+            field = Field()
+
+        test = Test()
+        test.field = 'test'
+
+        await test.save()
+
+        id = test.id
+
+        test = Test()
+        test.id = id
+
+        await test.load()
+
+        self.assertEqual(test.field, 'test')
+
+        await test.delete()
+
+    async def test_load_projection(self):
+
+        class Alpha(Model):
+            field = Field()
+
+        class Beta(MongoDBModel):
+            alpha = Field(type=Alpha)
+            field = Field()
+
+        beta = Beta()
+        beta.alpha = { 'field': 'testing' }
+        beta.field = 'value'
+
+        await beta.save()
+
+        id = beta.id
+
+        beta = Beta()
+        beta.id = id
+
+        await beta.load(projection={
+            'alpha.field': 1
+        })
+
+        self.assertIsNone(beta.field)
+        self.assertEqual(beta.alpha.field, 'testing')
+
+        await beta.delete()
+
     async def test_delete(self):
 
         class Test(MongoDBModel):
@@ -242,6 +292,28 @@ class MongoDBModelTest(AsyncTestCase):
 
         self.assertIs(test, None)
 
+    async def test_find_by_id_projection(self):
+
+        class Alpha(Model):
+            field = Field()
+
+        class Beta(MongoDBModel):
+            alpha = Field(type=Alpha)
+            field = Field()
+
+        beta = Beta()
+        beta.alpha = { 'field': 'testing' }
+        beta.field = 'value'
+
+        await beta.save()
+
+        beta = await Beta.find_by_id(beta.id, projection={
+            'alpha.field': 1
+        })
+
+        self.assertIsNone(beta.field)
+        self.assertEqual(beta.alpha.field, 'testing')
+
     async def test_find_one(self):
 
         class Test(MongoDBModel):
@@ -268,29 +340,27 @@ class MongoDBModelTest(AsyncTestCase):
 
     async def test_find_one_projection(self):
 
-        class Alpha(MongoDBModel):
+        class Alpha(Model):
             field = Field()
 
         class Beta(MongoDBModel):
             alpha = Field(type=Alpha)
-            another_field = Field()
+            field = Field()
 
         beta = Beta()
         beta.alpha = { 'field': 'testing' }
-        beta.another_field = 'value'
+        beta.field = 'value'
+
         await beta.save()
 
-        beta = await Beta.find_one(
-            { 'another_field': 'value' },
-            projection = {
-                '_id': 0,
-                'alpha.field': 1
-            }
-        )
+        beta = await Beta.find_one({ 'field': 'value' }, projection = {
+            'alpha.field': 1
+        })
 
-        self.assertIsNone(beta.id)
-        self.assertIsNone(beta.another_field)
+        self.assertIsNone(beta.field)
         self.assertEqual(beta.alpha.field, 'testing')
+
+        await beta.delete()
 
     async def test_find(self):
 
@@ -311,6 +381,8 @@ class MongoDBModelTest(AsyncTestCase):
 
         self.assertIn(test1.id, ids)
         self.assertIn(test2.id, ids)
+
+        await Test.drop()
 
     async def test_add_single(self):
 

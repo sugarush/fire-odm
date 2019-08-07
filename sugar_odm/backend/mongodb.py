@@ -112,10 +112,11 @@ class MongoDBModel(Model, RelationshipMixin):
         return False
 
     @classmethod
-    async def find_by_id(cls, id):
+    async def find_by_id(cls, id, **kargs):
         cls._connect()
         document = await cls._collection.find_one(
-            { '_id': ObjectId(id) }
+            { '_id': ObjectId(id) },
+            **kargs
         )
         if document:
             return cls(document)
@@ -188,13 +189,13 @@ class MongoDBModel(Model, RelationshipMixin):
                 message = 'Inserted ID not available or non-existent.'
                 raise Exception(message)
 
-    async def load(self, projection=None):
+    async def load(self, **kargs):
         self._connect()
         if self.id:
             document = await self._collection \
                 .find_one(
                     { '_id': ObjectId(self.id) },
-                    projection=projection
+                    **kargs
                 )
             if document:
                 self._data = { }
