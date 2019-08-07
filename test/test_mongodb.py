@@ -194,7 +194,7 @@ class MongoDBModelTest(AsyncTestCase):
 
         await test.delete()
 
-    async def test_load_projection(self):
+    async def test_load_with_projection(self):
 
         class Alpha(Model):
             field = Field()
@@ -292,7 +292,7 @@ class MongoDBModelTest(AsyncTestCase):
 
         self.assertIs(test, None)
 
-    async def test_find_by_id_projection(self):
+    async def test_find_by_id_with_projection(self):
 
         class Alpha(Model):
             field = Field()
@@ -338,7 +338,7 @@ class MongoDBModelTest(AsyncTestCase):
 
         self.assertIs(test, None)
 
-    async def test_find_one_projection(self):
+    async def test_find_one_with_projection(self):
 
         class Alpha(Model):
             field = Field()
@@ -383,6 +383,37 @@ class MongoDBModelTest(AsyncTestCase):
         self.assertIn(test2.id, ids)
 
         await Test.drop()
+
+    async def test_find_with_projection(self):
+
+        class Alpha(Model):
+            field = Field()
+
+        class Beta(MongoDBModel):
+            alpha = Field(type=Alpha)
+            field = Field()
+
+        await Beta.drop()
+
+        beta1 = Beta()
+        beta1.alpha = { 'field': 'testing' }
+        beta1.field = 'value'
+
+        await beta1.save()
+
+        beta2 = Beta()
+        beta2.alpha = { 'field': '123' }
+        beta2.field = 'value'
+
+        await beta2.save()
+
+        async for beta in Beta.find(projection={
+            'alpha.field': 1
+        }):
+            self.assertIsNone(beta.field)
+            self.assertIsNotNone(beta.alpha.field)
+
+        await Beta.drop()
 
     async def test_add_single(self):
 
