@@ -165,8 +165,7 @@ class MongoDBModel(Model, RelationshipMixin):
     async def save(self):
         self._connect()
         self.validate()
-        # XXX: should this be replaced with self.exists(self.id)?
-        if self.id:
+        if self.id and self.exists(self.id):
             data = self.serialize(computed=True, reset=True)
             del data['_id']
             document = await self._collection.find_one_and_update(
