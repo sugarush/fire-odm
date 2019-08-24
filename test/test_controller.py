@@ -1,6 +1,6 @@
 from sugar_asynctest import AsyncTestCase
 
-from sugar_odm import MongoDBModel, Field
+from sugar_odm import MongoDBModel, Model, Field
 from sugar_odm import MongoDB
 
 
@@ -261,3 +261,34 @@ class ControllerTest(AsyncTestCase):
         await alpha.delete()
 
         self.assertIsNone(await Beta.find_one({ 'id': beta.id }))
+
+    def test_get_root(self):
+
+        class Alpha(Model):
+            field = Field()
+
+        class Comment(Model):
+            content = Field()
+            owner = Field()
+            alphas = Field(type=[ Alpha ])
+
+        class Post(Model):
+            title = Field()
+            content = Field()
+            comments = Field(type=[ Comment ])
+
+        class User(MongoDBModel):
+            first_name = Field()
+            last_name = Field()
+            posts = Field(type=[ Post ])
+
+        user = User({
+            'posts': [
+                Post({
+                    'comments': [
+                        Comment({ })
+                    ]
+                })
+            ]
+        })
+        print(user.posts[0].comments[0].alphas._get_root())

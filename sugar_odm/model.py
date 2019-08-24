@@ -4,6 +4,7 @@ import inspect
 from . modelmeta import ModelMeta, get_class
 from . field import Field
 
+from . controller.list import List
 from . controller.has_one import HasOne
 from . controller.has_many import HasMany
 from . controller.belongs_to import BelongsTo
@@ -56,8 +57,10 @@ class Model(object, metaclass=ModelMeta):
             self._controllers[field.name] = HasMany(self, field)
         for field in self._belongs_to:
             self._controllers[field.name] = BelongsTo(self, field)
+        for field in self._list:
+            self._controllers[field.name] = List(self, field)
 
-    def get_controller(self, name):
+    def _get_controller(self, name):
         return self._controllers.get(name)
 
     def __init__(self, dictionary=None, **kargs):
@@ -66,8 +69,8 @@ class Model(object, metaclass=ModelMeta):
         self.update_direct(dictionary, **kargs)
 
     def __repr__(self):
-        return json.dumps(self.serialize(),
-            indent=4, sort_keys=True)
+        data = json.dumps(self.serialize(), indent=4, sort_keys=True)
+        return f'<{self.__class__.__name__}:{data}>'
 
     def __str__(self):
         return repr(self)
@@ -157,7 +160,7 @@ class Model(object, metaclass=ModelMeta):
 
     def set(self, key, value, direct=False):
         field = self._check_field(key)
-        controller = self.get_controller(field.name)
+        controller = self._get_controller(field.name)
         if controller:
             if direct:
                 controller.check(value)
@@ -191,7 +194,7 @@ class Model(object, metaclass=ModelMeta):
 
     def get(self, key, default=None, direct=False):
         field = self._check_field(key)
-        controller = self.get_controller(field.name)
+        controller = self._get_controller(field.name)
         if controller:
             if direct:
                 return self._data.get(key, default)
