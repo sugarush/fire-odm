@@ -12,7 +12,7 @@ class ModelTest(TestCase):
 
         test = Test()
 
-        self.assertEqual(repr(test), '{}')
+        self.assertEqual(repr(test), '<Test:{}>')
 
     def test_str(self):
 
@@ -21,7 +21,7 @@ class ModelTest(TestCase):
 
         test = Test()
 
-        self.assertEqual(str(test), '{}')
+        self.assertEqual(str(test), '<Test:{}>')
 
     def test_check_undefined(self):
 
