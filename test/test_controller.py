@@ -264,31 +264,45 @@ class ControllerTest(AsyncTestCase):
 
     def test_get_root(self):
 
-        class Comment(Model):
-            content = Field()
-            owner = Field()
+        class Beta(Model):
+            field = Field()
 
-        class Post(Model):
-            title = Field()
-            content = Field()
-            comments = Field(type=[ Comment ])
+        class Alpha(MongoDBModel):
+            betas = Field(type=[ Beta ])
 
-        class User(MongoDBModel):
-            first_name = Field()
-            last_name = Field()
-            posts = Field(type=[ Post ])
+        alpha = Alpha({
+            'betas': [
+                Beta({ })
+            ]
+        })
 
-        user = User({
-            'posts': [
-                Post({
-                    'comments': [
-                        Comment({ })
+        model, path = alpha.betas._get_root()
+
+        self.assertEqual(model, alpha)
+        self.assertEqual(path, 'betas')
+
+    def test_get_root_nested(self):
+
+        class Gamma(Model):
+            field = Field()
+
+        class Beta(Model):
+            gammas = Field(type=[ Gamma ])
+
+        class Alpha(MongoDBModel):
+            betas = Field(type=[ Beta ])
+
+        alpha = Alpha({
+            'betas': [
+                Beta({
+                    'gammas': [
+                        Gamma({ })
                     ]
                 })
             ]
         })
 
-        model, path = user.posts[0].comments._get_root()
+        model, path = alpha.betas[0].gammas._get_root()
 
-        self.assertEqual(model, user)
-        self.assertEqual(path, 'posts.0.comments')
+        self.assertEqual(model, alpha)
+        self.assertEqual(path, 'betas.0.gammas')
