@@ -64,9 +64,11 @@ class Model(object, metaclass=ModelMeta):
         return self._controllers.get(name)
 
     def __init__(self, dictionary=None, **kargs):
+        self._parent_model = None
+        self._parent_field_name = None
         self._data = { }
         self.populate_controllers()
-        self.update_direct(dictionary, **kargs)
+        self.update(dictionary, **kargs)
 
     def __repr__(self):
         data = json.dumps(self.serialize(), indent=4, sort_keys=True)
@@ -179,9 +181,15 @@ class Model(object, metaclass=ModelMeta):
         elif inspect.isclass(field.type) \
             and issubclass(field.type, Model):
             if isinstance(value, field.type):
-                self._data[key] = field.type(value._data)
+                model = field.type(value._data)
+                self._data[key] = model
+                model._parent_model = self
+                model._parent_field_name = key
             elif isinstance(value, dict):
-                self._data[key] = field.type(value)
+                model = field.type(value)
+                self._data[key] = model
+                model._parent_model = self
+                model._parent_field_name = key
             else:
                 message = '{model}\'s field "{field}" must be set with a dict or {type} object.'.format(
                     model=self.__class__.__name__,
@@ -311,7 +319,10 @@ class Model(object, metaclass=ModelMeta):
         obj = self._data.copy()
 
         for field in self._fields:
-            if inspect.isclass(field.type) \
+            controller = self._get_controller(field.name)
+            if isinstance(controller, List):
+                obj[field.name] = controller.serialize()
+            elif inspect.isclass(field.type) \
                 and issubclass(field.type, Model):
                 model = self.get_direct(field.name, field.type())
                 data = model.serialize(computed=computed, reset=reset)

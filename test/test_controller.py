@@ -264,13 +264,9 @@ class ControllerTest(AsyncTestCase):
 
     def test_get_root(self):
 
-        class Alpha(Model):
-            field = Field()
-
         class Comment(Model):
             content = Field()
             owner = Field()
-            alphas = Field(type=[ Alpha ])
 
         class Post(Model):
             title = Field()
@@ -291,4 +287,8 @@ class ControllerTest(AsyncTestCase):
                 })
             ]
         })
-        print(user.posts[0].comments[0].alphas._get_root())
+
+        model, path = user.posts[0].comments._get_root()
+
+        self.assertEqual(model, user)
+        self.assertEqual(path, 'posts.0.comments')

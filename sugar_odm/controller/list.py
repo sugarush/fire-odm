@@ -1,3 +1,5 @@
+from .. modelmeta import ModelMeta
+
 from . controller import Controller
 
 
@@ -19,18 +21,16 @@ class List(Controller):
         return self.model._data[self.field.name][index]
 
     def _get_root(self):
-        field = self.field
-        path = [ field.name ]
-        root = None
-        while field._model:
-            root = field._model
-            if not field._model._field:
-                break
-            field = field._model._field
-            if field._controller._index:
-                path.insert(0, field._controller._index)
-                field._controller._index = None
-            path.insert(0, field.name)
+        root = self.model
+        path = [ self.field.name ]
+        while root._parent_model:
+            controller = \
+                root._parent_model._get_controller(root._parent_field_name)
+            if controller and controller._index:
+                path.insert(0, controller._index)
+                controller._index = None
+            path.insert(0, root._parent_field_name)
+            root = root._parent_model
         return (root, '.'.join(path))
 
     def _check(self, value):
@@ -45,8 +45,20 @@ class List(Controller):
             for value in iterable:
                 self._check(value)
 
+    def serialize(self):
+        obj = self.model._data[self.field.name].copy()
+        for i in range(len(obj)):
+            if isinstance(type(obj[i]), ModelMeta):
+                obj[i] = obj[i].serialize()
+        return obj
+
     def set(self, iterable):
         self.check(iterable)
+        if len(self._types) == 1 \
+            and isinstance(self._types[0], ModelMeta):
+            for model in iterable:
+                model._parent_model = self.model
+                model._parent_field_name = self.field.name
         self.model._data[self.field.name] = list(iterable)
 
     def append(self, value):

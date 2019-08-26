@@ -46,7 +46,6 @@ class ModelMeta(type):
         for name, field in members:
 
             field.name = name
-            field._model = cls
 
             if inspect.isclass(field.type) \
                 and isinstance(field.type, ModelMeta):
@@ -55,9 +54,6 @@ class ModelMeta(type):
 
             if isinstance(field.type, list):
                 cls._list.append(field)
-                for item in field.type:
-                    if isinstance(item, ModelMeta):
-                        item._field = field
 
             if isinstance(field.type, str) \
                 or inspect.isfunction(field.type) \
