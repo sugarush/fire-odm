@@ -290,6 +290,30 @@ class ControllerTest(AsyncTestCase):
             gammas = Field(type=[ Gamma ])
 
         class Alpha(MongoDBModel):
+            beta = Field(type=Beta)
+
+        alpha = Alpha({
+            'beta': {
+                'gammas': [
+                    Gamma({ })
+                ]
+            }
+        })
+
+        model, path = alpha.beta.gammas._get_root()
+
+        self.assertEqual(model, alpha)
+        self.assertEqual(path, 'beta.gammas')
+
+    def test_get_root_nested_list(self):
+
+        class Gamma(Model):
+            field = Field()
+
+        class Beta(Model):
+            gammas = Field(type=[ Gamma ])
+
+        class Alpha(MongoDBModel):
             betas = Field(type=[ Beta ])
 
         alpha = Alpha({
