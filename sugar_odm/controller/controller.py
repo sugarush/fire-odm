@@ -3,6 +3,7 @@ from abc import ABCMeta, abstractmethod
 class Controller(metaclass=ABCMeta):
 
     def __init__(self, model, field):
+        field._controller = self
         self.model = model
         self.field = field
 

@@ -2,6 +2,7 @@
 class Field(object):
 
     def __init__(self, type=str, primary=False, required=False, related=False, indexed=False, validated=False, computed=False, computed_empty=False, computed_type=False, has_one=False, has_many=False, belongs_to=False, auto_delete=False):
+        self._controller = None
         self._model = None
         self.name = None
         self.type = type
