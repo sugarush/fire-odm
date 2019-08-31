@@ -54,13 +54,16 @@ class List(Controller):
 
     def set(self, iterable):
         self.check(iterable)
+        data = [ ]
         if len(self._types) == 1 \
             and isinstance(self._types[0], ModelMeta):
             for model in iterable:
-                if isinstance(type(model), ModelMeta):
-                    model._parent_model = self.model
-                    model._parent_field_name = self.field.name
-        self.model._data[self.field.name] = list(iterable)
+                if not isinstance(type(model), ModelMeta):
+                    model = self.field.type(model)
+                model._parent_model = self.model
+                model._parent_field_name = self.field.name
+                data.append(model)
+        self.model._data[self.field.name] = data
 
     def append(self, value):
         pass
