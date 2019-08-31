@@ -59,7 +59,7 @@ class List(Controller):
             and isinstance(self._types[0], ModelMeta):
             for model in iterable:
                 if not isinstance(type(model), ModelMeta):
-                    model = self.field.type(model)
+                    model = self._types[0](model)
                 model._parent_model = self.model
                 model._parent_field_name = self.field.name
                 data.append(model)
