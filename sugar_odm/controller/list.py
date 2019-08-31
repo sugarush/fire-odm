@@ -57,8 +57,9 @@ class List(Controller):
         if len(self._types) == 1 \
             and isinstance(self._types[0], ModelMeta):
             for model in iterable:
-                model._parent_model = self.model
-                model._parent_field_name = self.field.name
+                if isinstance(type(model), ModelMeta):
+                    model._parent_model = self.model
+                    model._parent_field_name = self.field.name
         self.model._data[self.field.name] = list(iterable)
 
     def append(self, value):
