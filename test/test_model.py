@@ -102,6 +102,15 @@ class ModelTest(TestCase):
         with self.assertRaises(Exception):
             test.set('field', 'value')
 
+    def test_set_none(self):
+
+        class Test(Model):
+            field = Field()
+
+        test = Test({ 'field': None })
+
+        self.assertIsNone(test.field)
+
     def test_set_nested_model_from_dict(self):
 
         class Beta(Model):

@@ -169,6 +169,8 @@ class Model(object, metaclass=ModelMeta):
                 self._data[key] = value
             else:
                 controller.set(value)
+        elif value == None:
+            self._data[key] = None
         # field's type is a string for a method on this object
         elif isinstance(field.type, str):
             self._data[key] = getattr(self, field.type)(value)
