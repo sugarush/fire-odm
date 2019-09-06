@@ -5,6 +5,7 @@ defaultContentLanguage = 'en'
 title = 'Sugar ODM Documentation'
 theme = 'hugo-theme-learn'
 defaultContentLanguageInSubdir = true
+uglyurls = true
 
 # For search functionality
 [outputs]
