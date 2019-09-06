@@ -80,7 +80,8 @@ class MongoDBModel(Model, RelationshipMixin):
                     index['options'] = { 'background': True }
                 else:
                     index['options']['background'] = True
-                await cls._collection.create_index(index.keys, **index.options)
+                await cls._collection.create_index(index.keys, \
+                    **index['options'])
 
     @classmethod
     def default_primary(cls):
