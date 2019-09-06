@@ -77,7 +77,7 @@ class MongoDBModel(Model, RelationshipMixin):
         for index in cls.__index__:
             if not index.get('options'):
                 index['options'] = { 'background': True }
-            else
+            else:
                 index['options']['background'] = True
             await cls._collection.create_index(index.keys, **index.options)
 
