@@ -48,7 +48,7 @@ class MongoDBModel(Model, RelationshipMixin):
     _collection = None
 
     @classmethod
-    def _connect(cls):
+    async def _connect(cls):
 
         if cls.__name__ == 'MongoDBModel':
             return
@@ -92,17 +92,17 @@ class MongoDBModel(Model, RelationshipMixin):
 
     @classmethod
     async def count(cls):
-        cls._connect()
+        await cls._connect()
         return await cls._collection.count_documents({ })
 
     @classmethod
     async def drop(cls):
-        cls._connect()
+        await cls._connect()
         await cls._collection.drop()
 
     @classmethod
     async def exists(cls, id):
-        cls._connect()
+        await cls._connect()
         document = await cls._collection.find_one(
             { '_id': ObjectId(id) },
             { '_id': True }
@@ -113,7 +113,7 @@ class MongoDBModel(Model, RelationshipMixin):
 
     @classmethod
     async def find_by_id(cls, id, **kargs):
-        cls._connect()
+        await cls._connect()
         document = await cls._collection.find_one(
             { '_id': ObjectId(id) },
             **kargs
@@ -124,7 +124,7 @@ class MongoDBModel(Model, RelationshipMixin):
 
     @classmethod
     async def find_one(cls, *args, **kargs):
-        cls._connect()
+        await cls._connect()
         document = await cls._collection.find_one(*args, **kargs)
         if document:
             return cls(document)
@@ -132,14 +132,14 @@ class MongoDBModel(Model, RelationshipMixin):
 
     @classmethod
     async def find(cls, *args, **kargs):
-        cls._connect()
+        await cls._connect()
         cursor = cls._collection.find(*args, **kargs)
         async for document in cursor:
             yield cls(document)
 
     @classmethod
     async def add(cls, args):
-        cls._connect()
+        await cls._connect()
         if isinstance(args, dict):
             model = cls(args)
             await model.save()
@@ -156,14 +156,14 @@ class MongoDBModel(Model, RelationshipMixin):
             raise Exception(message)
 
     async def operation(self, query):
-        self._connect()
+        await self._connect()
         await self._collection.find_one_and_update({
             '_id': ObjectId(self.id)
         }, query)
         await self.load()
 
     async def save(self):
-        self._connect()
+        await self._connect()
         self.validate()
         if self.id and await self.exists(self.id):
             data = self.serialize(computed=True, reset=True)
@@ -189,7 +189,7 @@ class MongoDBModel(Model, RelationshipMixin):
                 raise Exception(message)
 
     async def load(self, **kargs):
-        self._connect()
+        await self._connect()
         if self.id:
             document = await self._collection \
                 .find_one(
@@ -207,7 +207,7 @@ class MongoDBModel(Model, RelationshipMixin):
             raise Exception(message)
 
     async def delete(self):
-        self._connect()
+        await self._connect()
         if self.id:
             result = await self._collection \
                 .delete_one({ '_id': ObjectId(self.id) })

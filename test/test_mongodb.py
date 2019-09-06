@@ -51,32 +51,32 @@ class MongoDBModelTest(AsyncTestCase):
         with self.assertRaises(AttributeError):
             MongoDBModel.check_primary(field)
 
-    def test_connect_connection_options_default(self):
+    async def test_connect_connection_options_default(self):
 
         class Test(MongoDBModel):
             pass
 
-        Test._connect()
+        await Test._connect()
 
         host, port = Test._connection.address
 
         self.assertEqual(host, 'localhost')
         self.assertEqual(port, 27017)
 
-    def test_connect_connection_options(self):
+    async def test_connect_connection_options(self):
 
         class Test(MongoDBModel):
             __connection__ = {
                 'host': '127.0.0.1'
             }
 
-        Test._connect()
+        await Test._connect()
 
         host, port = Test._connection.address
 
         self.assertEqual(host, '127.0.0.1')
 
-    def test_connect_connection_options_shared(self):
+    async def test_connect_connection_options_shared(self):
 
         class Alpha(MongoDBModel):
             pass
@@ -90,25 +90,25 @@ class MongoDBModelTest(AsyncTestCase):
         class Delta(MongoDBModel):
             __connection__ = { 'host': '127.0.0.1' }
 
-        Alpha._connect()
-        Beta._connect()
-        Gamma._connect()
-        Delta._connect()
+        await Alpha._connect()
+        await Beta._connect()
+        await Gamma._connect()
+        await Delta._connect()
 
         self.assertIs(Alpha._connection, Beta._connection)
         self.assertIsNot(Alpha._connection, Gamma._connection)
         self.assertIs(Gamma._connection, Delta._connection)
 
-    def test_connect_database_options_default(self):
+    async def test_connect_database_options_default(self):
 
         class Test(MongoDBModel):
             pass
 
-        Test._connect()
+        await Test._connect()
 
         self.assertEqual(Test._database.name, 'test')
 
-    def test_connect_database_options(self):
+    async def test_connect_database_options(self):
 
         class Test(MongoDBModel):
 
@@ -116,27 +116,27 @@ class MongoDBModelTest(AsyncTestCase):
                 'name': 'some_database'
             }
 
-        Test._connect()
+        await Test._connect()
 
         self.assertEqual(Test._database.name, 'some_database')
 
-    def test_connect_collection_options_default(self):
+    async def test_connect_collection_options_default(self):
 
         class Test(MongoDBModel):
             pass
 
-        Test._connect()
+        await Test._connect()
 
         self.assertEqual(Test._collection.name, 'tests')
 
-    def test_connect_collection_options(self):
+    async def test_connect_collection_options(self):
 
         class Test(MongoDBModel):
             __collection__ = {
                 'name': 'some_collection'
             }
 
-        Test._connect()
+        await Test._connect()
 
         self.assertEqual(Test._collection.name, 'some_collection')
 
