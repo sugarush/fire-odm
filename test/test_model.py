@@ -541,6 +541,23 @@ class ModelTest(TestCase):
 
         test.validate()
 
+    def test_validate_computed_before(self):
+
+        scope = self
+
+        class Test(Model):
+            field = Field(validated='field_validator', computed='default_value', validated_before_computed=True)
+
+            def default_value(self):
+                return 'value'
+
+            def field_validator(self, value):
+                scope.assertNotEqual(value, 'value')
+
+        test = Test()
+
+        test.validate()
+
     def test_validate_method(self):
 
         scope = self

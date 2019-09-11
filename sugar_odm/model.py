@@ -262,18 +262,30 @@ class Model(object, metaclass=ModelMeta):
                         else: # field.computed_empty is false or no value
                             if isinstance(field.computed, str):
                                 if isinstance(field.validated, str):
-                                    value = getattr(self, field.computed)()
-                                    getattr(self, field.validated)(value)
+                                    if field.validated_before_computed:
+                                        getattr(self, field.validated)(value)
+                                    else:
+                                        value = getattr(self, field.computed)()
+                                        getattr(self, field.validated)(value)
                                 else: # field.validated is not a string
-                                    value = getattr(self, field.computed)()
-                                    field.validated(value)
+                                    if field.validated_before_computed:
+                                        field.validated(value)
+                                    else:
+                                        value = getattr(self, field.computed)()
+                                        field.validated(value)
                             else: # field.computed is not a string
                                 if isinstance(field.validated, str):
-                                    value = field.computed()
-                                    getattr(self, field.validated)(value)
+                                    if field.validated_before_computed:
+                                        getattr(self, field.validated)(value)
+                                    else:
+                                        value = field.computed()
+                                        getattr(self, field.validated)(value)
                                 else: # field.validated is not a string
-                                    value = field.computed()
-                                    field.validated(value)
+                                    if field.validated_before_computed:
+                                        field.validated(value)
+                                    else:
+                                        value = field.computed()
+                                        field.validated(value)
                     else: # field.computed_type is false
                         if field.computed_empty and value:
                             # XXX: calls to field.type may not be necessary in
@@ -288,18 +300,30 @@ class Model(object, metaclass=ModelMeta):
                         else: # field.computed_empty is false or no value
                             if isinstance(field.validated, str):
                                 if isinstance(field.computed, str):
-                                    value = getattr(self, field.computed)()
-                                    value = field.type(value)
-                                    getattr(self, field.validated)(value)
+                                    if field.validated_before_computed:
+                                        value = field.type(value)
+                                        getattr(self, field.validated)(value)
+                                    else:
+                                        value = getattr(self, field.computed)()
+                                        value = field.type(value)
+                                        getattr(self, field.validated)(value)
                                 else: # field.computed is not a string
-                                    value = field.computed()
-                                    value = field.type(value)
-                                    getattr(self, field.validated)(value)
+                                    if field.validated_before_computed:
+                                        value = field.type(value)
+                                        getattr(self, field.validated)(value)
+                                    else:
+                                        value = field.computed()
+                                        value = field.type(value)
+                                        getattr(self, field.validated)(value)
                             else: # field.validated is not a string
                                 if isinstance(field.computed, str):
-                                    value = getattr(self, field.computed)()
-                                    value = field.type(value)
-                                    field.validated(value)
+                                    if field.validated_before_computed:
+                                        value = field.type(value)
+                                        field.validated(value)
+                                    else:
+                                        value = getattr(self, field.computed)()
+                                        value = field.type(value)
+                                        field.validated(value)
                                 else: # field.computed is not a string
                                     value = field.computed()
                                     value = field.type(value)
