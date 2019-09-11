@@ -31,7 +31,6 @@ class ModelMeta(type):
         cls._nested = [ ]
         cls._related = [ ]
         cls._required = [ ]
-        cls._indexed = [ ]
         cls._validated = [ ]
         cls._computed = [ ]
         cls._dynamic = [ ]
@@ -62,9 +61,6 @@ class ModelMeta(type):
 
             if field.required:
                 cls._required.append(field)
-
-            if field.indexed:
-                cls._indexed.append(field)
 
             if field.validated:
                 cls._validated.append(field)
