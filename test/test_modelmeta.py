@@ -55,15 +55,6 @@ class ModelMetaTest(TestCase):
 
         self.assertIn(field, Test._required)
 
-    def test_field_indexed(self):
-
-        field = Field(indexed=True)
-
-        class Test(metaclass=ModelMeta):
-            test = field
-
-        self.assertIn(field, Test._indexed)
-
     def test_field_model_nested(self):
 
         class Beta(metaclass=ModelMeta):
