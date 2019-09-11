@@ -309,13 +309,12 @@ class Model(object, metaclass=ModelMeta):
                     # XXX: this block. value is typed when it is set on
                     # XXX: this object.
                     value = self.get(field.name)
-                    if value:
-                        if isinstance(field.validated, str):
-                            value = field.type(value)
-                            getattr(self, field.validated)(value)
-                        else:
-                            value = field.type(value)
-                            field.validated(value)
+                    if isinstance(field.validated, str):
+                        value = field.type(value)
+                        getattr(self, field.validated)(value)
+                    else:
+                        value = field.type(value)
+                        field.validated(value)
 
     def serialize(self, computed=False, reset=False):
         obj = self._data.copy()
