@@ -134,7 +134,7 @@ class MongoDBModel(Model, RelationshipMixin):
     @classmethod
     async def find_one(cls, *args, **kargs):
         await cls._connect()
-        inject_query(*args, **kargs)
+        inject_query(*args)
         document = await cls._collection.find_one(*args, **kargs)
         if document:
             return cls(document)
@@ -143,7 +143,7 @@ class MongoDBModel(Model, RelationshipMixin):
     @classmethod
     async def find(cls, *args, **kargs):
         await cls._connect()
-        inject_query(*args, **kargs)
+        inject_query(*args)
         cursor = cls._collection.find(*args, **kargs)
         async for document in cursor:
             yield cls(document)
@@ -202,7 +202,6 @@ class MongoDBModel(Model, RelationshipMixin):
     async def load(self, **kargs):
         await self._connect()
         if self.id:
-            inject_query(**kargs)
             document = await self._collection \
                 .find_one(
                     { '_id': ObjectId(self.id) },
