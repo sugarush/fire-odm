@@ -71,7 +71,11 @@ class Model(object, metaclass=ModelMeta):
         self.update(dictionary, **kargs)
 
     def __repr__(self):
-        data = json.dumps(self.serialize(), indent=4, sort_keys=True)
+        data = json.dumps(self.serialize(),
+            indent=4,
+            sort_keys=True,
+            default=lambda date: date.isoformat()
+        )
         return f'<{self.__class__.__name__}:{data}>'
 
     def __str__(self):
