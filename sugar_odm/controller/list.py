@@ -56,16 +56,6 @@ class List(Controller):
                 data.append(item)
         self.model._data[self.field.name] = data
 
-        if len(self._types) == 1 \
-            and isinstance(self._types[0], ModelMeta):
-            for model in iterable:
-                if not isinstance(type(model), ModelMeta):
-                    model = self._types[0](model)
-                model._parent_model = self.model
-                model._parent_field_name = self.field.name
-                data.append(model)
-        self.model._data[self.field.name] = data
-
     def __getitem__(self, index):
         if not index >= 0:
             raise Exception('List indices must be positive.')
