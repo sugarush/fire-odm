@@ -13,6 +13,8 @@ class List(Controller):
             raise Exception('List fields can have no type, or one type.')
         if isinstance(self.field.type, list):
             self._types = list(self.field.type)
+        if not self.model.get(self.field.name):
+            self.model.set(self.field.name, [ ])
 
     def __getitem__(self, index):
         if not index >= 0:
