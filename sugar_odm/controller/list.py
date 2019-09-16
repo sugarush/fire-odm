@@ -50,7 +50,7 @@ class List(Controller):
                         model._parent_field_name = self.field.name
                         data.append(model)
                 else:
-                    value = this._types[0](item)
+                    value = self._types[0](item)
                     data.append(value)
             else:
                 data.append(item)
