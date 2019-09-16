@@ -9,10 +9,15 @@ class List(Controller):
         super(List, self).__init__(*args, **kargs)
         self._types = None
         self._index = None
+
         if not len(self.field.type) >= 1:
             raise Exception('List fields can have no type, or one type.')
+
         if isinstance(self.field.type, list):
             self._types = list(self.field.type)
+
+        self.field.type = list
+
         if not self.model.get(self.field.name):
             self.model.set(self.field.name, [ ])
 
