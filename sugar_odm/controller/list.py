@@ -7,7 +7,7 @@ class List(Controller):
 
     def __init__(self, *args, **kargs):
         super(List, self).__init__(*args, **kargs)
-        self._types = None
+        self._types = [ ]
         self._index = None
 
         if isinstance(self.field.type, list):
