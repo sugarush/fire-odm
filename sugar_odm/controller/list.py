@@ -16,9 +16,6 @@ class List(Controller):
             self._types = list(self.field.type)
             self.field.type = list
 
-        if not isinstance(self.model._data[self.field.name], list):
-            self.model._data[self.field.name] = [ ]
-
     def __getitem__(self, index):
         if not index >= 0:
             raise Exception('List indices must be positive.')
