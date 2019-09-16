@@ -10,16 +10,11 @@ class List(Controller):
         self._types = None
         self._index = None
 
-        if not len(self.field.type) >= 1:
-            raise Exception('List fields can have no type, or one type.')
-
         if isinstance(self.field.type, list):
+            if not len(self.field.type) >= 1:
+                raise Exception('List fields can have no type, or one type.')
             self._types = list(self.field.type)
-
-        self.field.type = list
-
-        if not self.model.get(self.field.name):
-            self.model.set(self.field.name, [ ])
+            self.field.type = list
 
     def __getitem__(self, index):
         if not index >= 0:
@@ -86,7 +81,7 @@ class List(Controller):
             pass
         else:
             if isinstance(self.field.type, list):
-                if not len(self.field.type) == 1:
+                if not len(self._types) == 1:
                     raise Exception(
                         f'Cannot determine type of field {self.field.name}.'
                     )
