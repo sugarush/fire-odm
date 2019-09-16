@@ -1,3 +1,5 @@
+from unittest import skip
+
 from sugar_asynctest import AsyncTestCase
 
 from sugar_odm import MongoDBModel, Model, Field
@@ -330,3 +332,26 @@ class ControllerTest(AsyncTestCase):
 
         self.assertEqual(model, alpha)
         self.assertEqual(path, 'betas.0.gammas')
+
+    def test_list_nested_object(self):
+
+        class Gamma(Model):
+            field = Field()
+
+        class Beta(Model):
+            gammas = Field(type=[ Gamma ])
+
+        class Alpha(MongoDBModel):
+            betas = Field(type=[ Beta ])
+
+        alpha = Alpha({
+            'betas': [
+                {
+                    'gammas': [
+                        { 'field': 'value' }
+                    ]
+                }
+            ]
+        })
+
+        self.assertEqual(alpha.betas[0].gammas[0].field, 'value')

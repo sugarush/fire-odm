@@ -14,26 +14,6 @@ class List(Controller):
             if not len(self.field.type) >= 1:
                 raise Exception('List fields can have no type, or one type.')
             self._types = list(self.field.type)
-            self.field.type = list
-
-    def __getitem__(self, index):
-        if not index >= 0:
-            raise Exception('List indices must be positive.')
-        self._index = str(index)
-        return self.model._data[self.field.name][index]
-
-    def _get_root(self):
-        root = self.model
-        path = [ self.field.name ]
-        while root._parent_model:
-            controller = \
-                root._parent_model._get_controller(root._parent_field_name)
-            if controller and controller._index:
-                path.insert(0, controller._index)
-                controller._index = None
-            path.insert(0, root._parent_field_name)
-            root = root._parent_model
-        return (root, '.'.join(path))
 
     def _check(self, value):
         if self._types:
@@ -57,6 +37,25 @@ class List(Controller):
     def set(self, iterable):
         self.check(iterable)
         data = [ ]
+        for item in iterable:
+            if self._types:
+                if isinstance(self._types[0], ModelMeta):
+                    if isinstance(type(item), ModelMeta):
+                        item._parent_model = self.model
+                        item._parent_field_name = self.field.name
+                        data.append(item)
+                    elif isinstance(item, dict):
+                        model = self._types[0](item)
+                        model._parent_model = self.model
+                        model._parent_field_name = self.field.name
+                        data.append(model)
+                else:
+                    value = this._types[0](item)
+                    data.append(value)
+            else:
+                data.append(item)
+        self.model._data[self.field.name] = data
+
         if len(self._types) == 1 \
             and isinstance(self._types[0], ModelMeta):
             for model in iterable:
@@ -66,6 +65,25 @@ class List(Controller):
                 model._parent_field_name = self.field.name
                 data.append(model)
         self.model._data[self.field.name] = data
+
+    def __getitem__(self, index):
+        if not index >= 0:
+            raise Exception('List indices must be positive.')
+        self._index = str(index)
+        return self.model._data[self.field.name][index]
+
+    def _get_root(self):
+        root = self.model
+        path = [ self.field.name ]
+        while root._parent_model:
+            controller = \
+                root._parent_model._get_controller(root._parent_field_name)
+            if controller and controller._index:
+                path.insert(0, controller._index)
+                controller._index = None
+            path.insert(0, root._parent_field_name)
+            root = root._parent_model
+        return (root, '.'.join(path))
 
     def append(self, value):
         pass
