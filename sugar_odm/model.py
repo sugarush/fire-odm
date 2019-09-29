@@ -204,7 +204,7 @@ class Model(object, metaclass=ModelMeta):
                 )
                 raise Exception(message)
         else:
-            self._data[key] = field.type(value)
+            raise Exception('Model field error.')
 
     def get(self, key, default=None, direct=False):
         field = self._check_field(key)
