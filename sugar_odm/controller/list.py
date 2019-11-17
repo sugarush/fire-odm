@@ -28,7 +28,7 @@ class List(Controller):
                 self._check(value)
 
     def serialize(self):
-        obj = self.model._data[self.field.name].copy()
+        obj = self.model._data.get(self.field.name, [ ]).copy()
         for i in range(len(obj)):
             if isinstance(type(obj[i]), ModelMeta):
                 obj[i] = obj[i].serialize()
