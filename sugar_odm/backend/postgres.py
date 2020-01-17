@@ -40,8 +40,17 @@ class PostgresDBModel(Model):
 
     _pool = None
 
+    async def operation(self, query):
+        raise NotImplemented()
+
     @classmethod
     async def _connect(cls):
+
+        async with pool.acquire() as connection:
+            try:
+                await connection.fetch(f'CREATE TABLE {cls._table} ( data jsonb );')
+            except DuplicateTableError:
+                pass
 
         if cls.__name__ == 'PostgresDBModel':
             return
@@ -57,12 +66,6 @@ class PostgresDBModel(Model):
             return
 
         cls._pool = pool
-
-        async with pool.acquire() as connection:
-            try:
-                await connection.fetch(f'CREATE TABLE {cls._table} ( data jsonb );')
-            except DuplicateTableError:
-                pass
 
     @classmethod
     async def _acquire(cls):
@@ -123,15 +126,31 @@ class PostgresDBModel(Model):
                 raise Exception('No records found.')
 
     @classmethod
-    async def find(cls, *args, **kargs):
-        pass
+    async def find(cls, *args, where='', limit=100, offset=0, **kargs):
+        async with await cls._acquire() as connection:
+            query = f'SELECT data FROM {cls._table} '
+            if where:
+                query += f'WHERE {where} '
+            query += f'LIMIT {limit} OFFSET {offset};'
+            result = await connection.fetch(query)
+            for row in result:
+                yield cls(loads(row['data']))
 
     @classmethod
     async def add(cls, args):
-        pass
-
-    async def operation(self, query):
-        pass
+        if isinstance(args, dict):
+            model = cls(args)
+            await model.save()
+            return model
+        elif isinstance(args, list):
+            models = [ ]
+            for data in args:
+                model = cls(data)
+                await model.save()
+                models.append(model)
+            return models
+        else:
+            raise Exception('Invalid argument to PostgresDBModel.add: must be a list or dict.')
 
     async def save(self):
         json = self.serialize(computed=True, reset=True)
