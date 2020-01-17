@@ -4,9 +4,10 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import ReturnDocument
 
 from .. util import serialize, inject_query
-from .. model import Model, Field
+from .. model import Model
+from .. field import Field
 
-from . backend import RelationshipMixin
+from .. relationship import RelationshipMixin
 
 
 class MongoDB(object):
@@ -31,14 +32,14 @@ class MongoDB(object):
 
     @classmethod
     def close(cls):
-        for connection in cls.connections:
-            cls.connections[connection].close()
+        for key in cls.connections:
+            cls.connections[key].close()
+        cls.connections = { }
 
     @classmethod
     def set_event_loop(cls, loop):
         cls.loop = loop
         cls.close()
-        cls.connections = { }
 
 
 class MongoDBModel(Model, RelationshipMixin):

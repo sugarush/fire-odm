@@ -3,7 +3,7 @@ from copy import copy
 from bson import ObjectId
 
 from .. model import Model, Field
-from . backend import RelationshipMixin
+from .. relationship import RelationshipMixin
 
 
 def find(db, query={ }):
