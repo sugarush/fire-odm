@@ -164,8 +164,7 @@ class MongoDBModel(Model, RelationshipMixin):
                 models.append(model)
             return models
         else:
-            message = 'Invalid argument to MongoDBModel.add: must be a list or dict.'
-            raise Exception(message)
+            raise Exception('Invalid argument to MongoDBModel.add: must be a list or dict.')
 
     async def operation(self, query):
         await self._connect()
