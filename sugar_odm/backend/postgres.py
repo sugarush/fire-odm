@@ -35,6 +35,7 @@ class PostgresDB(object):
         cls.loop = loop
         await cls.close()
 
+
 class PostgresDBModel(Model):
 
     _pool = None
@@ -75,7 +76,7 @@ class PostgresDBModel(Model):
         field.primary = True
         field.type = str
         field.computed = lambda: str(uuid4())
-        field.computed_empty = True
+        field.computed_empty = True # Compute this field only when empty.
         return field
 
     @classmethod
@@ -105,11 +106,21 @@ class PostgresDBModel(Model):
 
     @classmethod
     async def find_by_id(cls, id, **kargs):
-        pass
+        async with await cls._acquire() as connection:
+            result = await connection.fetch(f'SELECT data FROM {cls._table} WHERE data->>\'_id\' = \'{id}\';')
+            if len(result):
+                return cls(loads(result[0]['data']))
+            else:
+                raise Exception(f'Could not find any data for: {id}')
 
     @classmethod
     async def find_one(cls, *args, **kargs):
-        pass
+        async with await cls._acquire() as connection:
+            result = await connection.fetch(f'SELECT data FROM {cls._table} LIMIT 1;')
+            if len(result):
+                return cls(loads(result[0]['data']))
+            else:
+                raise Exception('No records found.')
 
     @classmethod
     async def find(cls, *args, **kargs):
