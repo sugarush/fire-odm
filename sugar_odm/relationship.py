@@ -1,4 +1,4 @@
-from .. modelmeta import get_class
+from . modelmeta import get_class
 
 
 class RelationshipMixin(object):
