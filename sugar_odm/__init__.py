@@ -4,3 +4,4 @@ from . model import Model
 
 from . backend.memory import MemoryModel
 from . backend.mongodb import MongoDB, MongoDBModel
+from . backend.postgres import PostgresDB, PostgresDBModel
