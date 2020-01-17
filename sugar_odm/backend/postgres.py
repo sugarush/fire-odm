@@ -46,12 +46,6 @@ class PostgresDBModel(Model):
     @classmethod
     async def _connect(cls):
 
-        async with pool.acquire() as connection:
-            try:
-                await connection.fetch(f'CREATE TABLE {cls._table} ( data jsonb );')
-            except DuplicateTableError:
-                pass
-
         if cls.__name__ == 'PostgresDBModel':
             return
 
@@ -61,6 +55,12 @@ class PostgresDBModel(Model):
             }
 
         pool = await PostgresDB.connect(**cls.__connection__)
+
+        async with pool.acquire() as connection:
+            try:
+                await connection.fetch(f'CREATE TABLE {cls._table} ( data jsonb );')
+            except DuplicateTableError:
+                pass
 
         if cls._pool is pool:
             return
@@ -126,13 +126,13 @@ class PostgresDBModel(Model):
                 raise Exception('No records found.')
 
     @classmethod
-    async def find(cls, *args, where='', limit=100, offset=0, **kargs):
+    async def find(cls, *args, query={ }, limit=100, offset=0, **kargs):
         async with await cls._acquire() as connection:
-            query = f'SELECT data FROM {cls._table} '
-            if where:
-                query += f'WHERE {where} '
-            query += f'LIMIT {limit} OFFSET {offset};'
-            result = await connection.fetch(query)
+            query_string = f'SELECT data FROM {cls._table} '
+            for (key, value) in query.items():
+                query_string += f'{key} {value}'
+            query_string += f'LIMIT {limit} OFFSET {offset};'
+            result = await connection.fetch(query_string)
             for row in result:
                 yield cls(loads(row['data']))
 
