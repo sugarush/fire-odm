@@ -117,9 +117,13 @@ class PostgresDBModel(Model):
                 raise Exception(f'Could not find any data for: {id}')
 
     @classmethod
-    async def find_one(cls, *args, **kargs):
+    async def find_one(cls, query={ }, **kargs):
         async with await cls._acquire() as connection:
-            result = await connection.fetch(f'SELECT data FROM {cls._table} LIMIT 1;')
+            query_string = f'SELECT data FROM {cls._table}'
+            for (key, value) in query.items():
+                query_string += f'{key} {value}'
+            query_string += f'LIMIT 1;'
+            result = await connection.fetch(query_string)
             if len(result):
                 return cls(loads(result[0]['data']))
             else:
