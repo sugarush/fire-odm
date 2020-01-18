@@ -133,7 +133,7 @@ class PostgresDBModel(Model):
             if len(result):
                 return cls(loads(result[0]['data']))
             else:
-                raise Exception('No records found.')
+                return None
 
     @classmethod
     async def find(cls, query={ }, limit=100, offset=0, **kargs):
