@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from sugar_odm import Model, Field
+from fire_odm import Model, Field
 
 
 class ModelTest(TestCase):

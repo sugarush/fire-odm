@@ -1,10 +1,10 @@
 from unittest import TestCase
 import asyncio
 
-from sugar_asynctest import AsyncTestCase
+from fire_asynctest import AsyncTestCase
 
-from sugar_odm import Model, Field
-from sugar_odm.backend.mongodb import MongoDB, MongoDBModel
+from fire_odm import Model, Field
+from fire_odm.backend.mongodb import MongoDB, MongoDBModel
 
 
 class MongoDBTest(TestCase):

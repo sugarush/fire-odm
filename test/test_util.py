@@ -2,7 +2,7 @@ from datetime import datetime
 
 from unittest import TestCase
 
-from sugar_odm.util import serialize, inject_query
+from fire_odm.util import serialize, inject_query
 
 
 class TestUtil(TestCase):

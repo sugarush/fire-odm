@@ -1,5 +1,5 @@
 inflection==0.3.1
 motor==2.0.0
-rethinkdb==2.3.0.post3
-sanic==0.8.1
--e git+https://github.com/sugarush/sugar-asynctest@f652ade886214ecb74beeb39f6fb5533e03305ed#egg=sugar_asynctest
+ujson==1.35
+asyncpg==0.20.1
+-e git+https://github.com/sugarush/fire-asynctest@master#egg=fire_asynctest

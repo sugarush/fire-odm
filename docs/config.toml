@@ -2,7 +2,7 @@ baseURL = '/'
 languageCode = 'en-us'
 defaultContentLanguage = 'en'
 
-title = 'Sugar ODM Documentation'
+title = 'Fire ODM Documentation'
 theme = 'hugo-theme-learn'
 defaultContentLanguageInSubdir = true
 uglyurls = true
@@ -12,6 +12,6 @@ uglyurls = true
   home = [ 'HTML', 'RSS', 'JSON']
 
 [params]
-  description = 'Documentation for Sugar ODM'
-  author = 'Lucifer Avada'
+  description = 'Documentation for Fire ODM'
+  author = 'Paul Severance'
   themeVariant = 'blue'

@@ -1,1 +1,1 @@
-PYTHON_VERSION="python3.7"
+set -l PYTHON_VERSION "python3.7"
