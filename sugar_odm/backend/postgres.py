@@ -126,7 +126,7 @@ class PostgresDBModel(Model):
                 raise Exception('No records found.')
 
     @classmethod
-    async def find(cls, *args, query={ }, limit=100, offset=0, **kargs):
+    async def find(cls, query={ }, limit=100, offset=0, **kargs):
         async with await cls._acquire() as connection:
             query_string = f'SELECT data FROM {cls._table} '
             for (key, value) in query.items():
