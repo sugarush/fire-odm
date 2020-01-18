@@ -56,16 +56,17 @@ class PostgresDBModel(Model):
 
         pool = await PostgresDB.connect(**cls.__connection__)
 
-        async with pool.acquire() as connection:
-            try:
-                await connection.fetch(f'CREATE TABLE {cls._table} ( data jsonb );')
-            except DuplicateTableError:
-                pass
-
         if cls._pool is pool:
             return
 
         cls._pool = pool
+
+        async with cls._pool.acquire() as connection:
+            try:
+                await connection.fetch(f'CREATE TABLE {cls._table} ( data jsonb );')
+                await connection.fetch(f'CREATE INDEX idx_id ON {cls._table} USING HASH ((data->>\'_id\'));')
+            except DuplicateTableError:
+                pass
 
     @classmethod
     async def _acquire(cls):
