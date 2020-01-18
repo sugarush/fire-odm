@@ -64,7 +64,7 @@ class PostgresDBModel(Model):
         async with cls._pool.acquire() as connection:
             try:
                 await connection.fetch(f'CREATE TABLE {cls._table} ( data jsonb );')
-                await connection.fetch(f'CREATE INDEX idx_id ON {cls._table} USING HASH ((data->>\'_id\'));')
+                await connection.fetch(f'CREATE INDEX idx_id_{cls._table} ON {cls._table} USING HASH ((data->>\'_id\'));')
             except DuplicateTableError:
                 pass
 
