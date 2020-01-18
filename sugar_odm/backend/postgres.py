@@ -119,9 +119,9 @@ class PostgresDBModel(Model):
     @classmethod
     async def find_one(cls, query={ }, **kargs):
         async with await cls._acquire() as connection:
-            query_string = f'SELECT data FROM {cls._table}'
+            query_string = f'SELECT data FROM {cls._table} '
             for (key, value) in query.items():
-                query_string += f'{key} {value}'
+                query_string += f'{key} {value} '
             query_string += f'LIMIT 1;'
             result = await connection.fetch(query_string)
             if len(result):
@@ -134,7 +134,7 @@ class PostgresDBModel(Model):
         async with await cls._acquire() as connection:
             query_string = f'SELECT data FROM {cls._table} '
             for (key, value) in query.items():
-                query_string += f'{key} {value}'
+                query_string += f'{key} {value} '
             query_string += f'LIMIT {limit} OFFSET {offset};'
             result = await connection.fetch(query_string)
             for row in result:
