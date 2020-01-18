@@ -49,9 +49,14 @@ class PostgresDBModel(Model):
         if cls.__name__ == 'PostgresDBModel':
             return
 
-        if not hasattr(cls, '__connection'):
+        if not hasattr(cls, '__database__'):
+            cls.__database__ = {
+                'name': 'postgres'
+            }
+
+        if not hasattr(cls, '__connection__'):
             cls.__connection__ = {
-                'database': 'postgres'
+                'database': cls.__database__.get('name', 'postgres')
             }
 
         pool = await PostgresDB.connect(**cls.__connection__)
