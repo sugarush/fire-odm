@@ -166,7 +166,8 @@ class PostgresDBModel(Model):
         json = self.serialize(computed=True, reset=True)
         async with await self._acquire() as connection:
             if self.id and await self.exists(self.id):
-                result = await connection.fetch(f'UPDATE {self._table} SET data = \'{dumps(json)}\' WHERE data ->> \'_id\' = \'{self.id}\'')
+                result = await connection.fetch(f'UPDATE {self._table} SET data = \'{dumps(json)}\' WHERE data ->> \'_id\' = \'{self.id}\' RETURNING data;')
+                self.update(loads(result[0]['data']))
             else:
                 result = await connection.fetch(f'INSERT INTO {self._table} VALUES (\'{dumps(json)}\') RETURNING data;')
                 self.update(loads(result[0]['data']))
