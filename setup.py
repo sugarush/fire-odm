@@ -17,6 +17,8 @@ setup(
     install_requires=[
         'inflection==0.3.1',
         'motor==2.0.0',
+        'ujson==1.35',
+        'asyncpg==0.20.1',
         'fire_asynctest==0.0.1'
     ],
     dependency_links=[
