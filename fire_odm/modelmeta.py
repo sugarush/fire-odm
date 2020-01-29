@@ -44,6 +44,22 @@ class ModelMeta(type):
 
         for name, field in members:
 
+            cls.add_field(name, field)
+
+        cls._check_primary()
+
+        cls._check_methods(cls._validated, 'validated')
+        cls._check_methods(cls._computed, 'computed')
+        cls._check_methods(cls._dynamic, 'type')
+
+        cls._check_callable(cls._validated, 'validated')
+        cls._check_callable(cls._computed, 'computed')
+        cls._check_callable(cls._dynamic, 'type')
+
+        cls.initialize()
+
+    def add_field(cls, name, field):
+
             field.name = name
 
             if inspect.isclass(field.type) \
@@ -82,18 +98,6 @@ class ModelMeta(type):
                 cls._auto_delete.append(field)
 
             cls._fields.append(field)
-
-        cls._check_primary()
-
-        cls._check_methods(cls._validated, 'validated')
-        cls._check_methods(cls._computed, 'computed')
-        cls._check_methods(cls._dynamic, 'type')
-
-        cls._check_callable(cls._validated, 'validated')
-        cls._check_callable(cls._computed, 'computed')
-        cls._check_callable(cls._dynamic, 'type')
-
-        cls.initialize()
 
     def initialize(cls):
         pass
