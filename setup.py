@@ -19,10 +19,10 @@ setup(
         'motor==2.0.0',
         'ujson==1.35',
         'asyncpg==0.20.1',
-        'fire_asynctest==0.0.1'
+        'fire_asynctest'
     ],
     dependency_links=[
-        'git+https://github.com/sugarush/fire-asynctest@master#egg=fire_asynctest-0.0.1'
+        'git+https://github.com/sugarush/fire-asynctest@master#egg=fire_asynctest'
 
     ]
 )
