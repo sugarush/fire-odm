@@ -19,10 +19,6 @@ setup(
         'motor==2.0.0',
         'ujson==1.35',
         'asyncpg==0.20.1',
-        'fire-asynctest@git+https://github.com/sugarush/fire-odm#egg=fire-odm-0.0.1'
-    ],
-    #dependency_links=[
-    #    'git+https://github.com/sugarush/fire-asynctest@master#egg=fire_asynctest-0'
-    #
-    #]
+        'fire-asynctest@git+https://github.com/sugarush/fire-asynctest#egg=fire-asynctest-0.0.1'
+    ]
 )
