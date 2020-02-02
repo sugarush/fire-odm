@@ -43,7 +43,6 @@ class ModelMeta(type):
         members = inspect.getmembers(cls, lambda item: isinstance(item, Field))
 
         for name, field in members:
-
             cls.add_field(name, field)
 
         cls._check_primary()
@@ -60,44 +59,44 @@ class ModelMeta(type):
 
     def add_field(cls, name, field):
 
-            field.name = name
+        field.name = name
 
-            if inspect.isclass(field.type) \
-                and isinstance(field.type, ModelMeta):
-                field.type._field = field
-                cls._nested.append(field)
+        if inspect.isclass(field.type) \
+            and isinstance(field.type, ModelMeta):
+            field.type._field = field
+            cls._nested.append(field)
 
-            if isinstance(field.type, list):
-                cls._list.append(field)
+        if isinstance(field.type, list):
+            cls._list.append(field)
 
-            if isinstance(field.type, str) \
-                or inspect.isfunction(field.type) \
-                or inspect.ismethod(field.type):
-                cls._dynamic.append(field)
+        if isinstance(field.type, str) \
+            or inspect.isfunction(field.type) \
+            or inspect.ismethod(field.type):
+            cls._dynamic.append(field)
 
-            if field.required:
-                cls._required.append(field)
+        if field.required:
+            cls._required.append(field)
 
-            if field.validated:
-                cls._validated.append(field)
+        if field.validated:
+            cls._validated.append(field)
 
-            if field.computed:
-                cls._computed.append(field)
+        if field.computed:
+            cls._computed.append(field)
 
-            if field.has_one:
-                cls._has_one.append(field)
+        if field.has_one:
+            cls._has_one.append(field)
 
-            if field.has_many:
-                field.type = list
-                cls._has_many.append(field)
+        if field.has_many:
+            field.type = list
+            cls._has_many.append(field)
 
-            if field.belongs_to:
-                cls._belongs_to.append(field)
+        if field.belongs_to:
+            cls._belongs_to.append(field)
 
-            if field.auto_delete:
-                cls._auto_delete.append(field)
+        if field.auto_delete:
+            cls._auto_delete.append(field)
 
-            cls._fields.append(field)
+        cls._fields.append(field)
 
     def initialize(cls):
         pass
