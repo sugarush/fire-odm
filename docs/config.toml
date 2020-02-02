@@ -14,4 +14,4 @@ uglyurls = true
 [params]
   description = 'Documentation for Fire ODM'
   author = 'Paul Severance'
-  themeVariant = 'blue'
+  themeVariant = 'purple'

@@ -6,7 +6,13 @@ weight: 20
 
 A field can be a computed property.
 
+{{% notice info %}}
+A computed property is only generated at save time.
+{{% /notice %}}
+
 ```python
+from fire_odm import MemoryModel, Field
+
 class Data(MemoryModel):
   first = Field(required=True)
   last = Field(required=True)
@@ -14,4 +20,10 @@ class Data(MemoryModel):
 
   def full_name(self):
     return f'{self.first} {self.last}'
+
+data = Data({ 'first': 'Alice', 'last': 'Jane' })
+
+await data.save()
+
+data.full # Prints 'Alice Jane'
 ```

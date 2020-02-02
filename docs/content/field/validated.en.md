@@ -7,14 +7,14 @@ weight: 15
 A field can be validated with an instance method.
 
 ```python
+from fire_odm import MemoryModel, Field
+
 class Data(MemoryModel):
   name = Field(validated='validate_name')
 
   def validate_name(self, value):
-    if not len(value) < 10:
-      raise Exception(f'Field "name" length greater than 10.')
+    if len(value) > 5:
+      raise Exception(f'Field "name" length greater than 5.')
 
-data = Data({ 'name': 'testing123' })
-
-data.validate() # Raises an exception.
+data = Data({ 'name': 'testing' }) # Raises an exception.
 ```

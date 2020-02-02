@@ -7,7 +7,7 @@ weight: 10
 A field can be required, as in the following example.
 
 ```python
-from sugar_odm import MemoryModel, Field
+from fire_odm import MemoryModel, Field
 
 class Data(MemoryModel):
   name = Field(required=True)
