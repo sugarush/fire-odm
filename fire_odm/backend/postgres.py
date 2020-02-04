@@ -128,6 +128,8 @@ class PostgresDBModel(Model):
             query_string = f'SELECT data FROM {cls._table} '
             for (key, value) in query.items():
                 query_string += f'{key} {value} '
+            if query_string.find(';') >= 0:
+                raise Exception('Your query must not contain any ;\'s.')
             query_string += f'LIMIT 1;'
             result = await connection.fetch(query_string)
             if len(result):
@@ -141,6 +143,8 @@ class PostgresDBModel(Model):
             query_string = f'SELECT data FROM {cls._table} '
             for (key, value) in query.items():
                 query_string += f'{key} {value} '
+            if query_string.find(';') >= 0:
+                raise Exception('Your query must not contain any ;\'s.')
             query_string += f'LIMIT {limit} OFFSET {offset};'
             result = await connection.fetch(query_string)
             for row in result:
