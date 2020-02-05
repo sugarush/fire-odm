@@ -7,7 +7,7 @@ weight: 20
 A field can be a computed property.
 
 {{% notice info %}}
-A computed property is only generated at save time.
+A computed property is only generated when the model is serialized, which happens at save time and when the model is printed.
 {{% /notice %}}
 
 ```python
