@@ -6,6 +6,8 @@ weight: 15
 
 ## Example
 
+Find all records in a table.
+
 ```python
 from fire_odm import PostgresDBModel, Field
 
@@ -21,6 +23,8 @@ await Model.add([
 ```
 
 ## Query
+
+Find a record using the `WHERE` clause.
 
 ```python
 from fire_odm import PostgresDBModel, Field
@@ -38,6 +42,8 @@ await Model.add([
 
 ## Limit
 
+Limit the number of results.
+
 ```python
 from fire_odm import PostgresDBModel, Field
 
@@ -53,6 +59,8 @@ await Model.add([
 ```
 
 ## Offset
+
+Skip a number of results.
 
 ```python
 from fire_odm import PostgresDBModel, Field
