@@ -12,7 +12,12 @@ from fire_odm import PostgresDBModel, Field
 class Model(PostgresDBModel):
   field = Field()
 
+await Model.add([
+  { 'field': 'alpha' },
+  { 'field': 'beta' }
+])
 
+[ model async for model in Model.find() ]
 ```
 
 ## Query
@@ -23,7 +28,12 @@ from fire_odm import PostgresDBModel, Field
 class Model(PostgresDBModel):
   field = Field()
 
+await Model.add([
+  { 'field': 'alpha' },
+  { 'field': 'beta' }
+])
 
+[ model async for model in Model.find({ 'WHERE': 'data->>\'field\' = \'beta\'' }) ]
 ```
 
 ## Limit
@@ -34,7 +44,12 @@ from fire_odm import PostgresDBModel, Field
 class Model(PostgresDBModel):
   field = Field()
 
+await Model.add([
+  { 'field': 'alpha' },
+  { 'field': 'beta' }
+])
 
+[ model async for model in Model.find(limit=1) ]
 ```
 
 ## Offset
@@ -45,5 +60,10 @@ from fire_odm import PostgresDBModel, Field
 class Model(PostgresDBModel):
   field = Field()
 
+await Model.add([
+  { 'field': 'alpha' },
+  { 'field': 'beta' }
+])
 
+[ model async for model in Model.find(limit=1, skip=1) ]
 ```
