@@ -140,14 +140,14 @@ class PostgresDBModel(Model):
                 return None
 
     @classmethod
-    async def find(cls, query={ }, limit=100, offset=0, **kargs):
+    async def find(cls, query={ }, limit=100, skip=0, **kargs):
         async with await cls._acquire() as connection:
             query_string = f'SELECT data FROM {cls._table} '
             for (key, value) in query.items():
                 query_string += f'{key} {value} '
             if query_string.find(';') >= 0:
                 raise Exception('Your query must not contain any ;\'s.')
-            query_string += f'LIMIT {limit} OFFSET {offset};'
+            query_string += f'LIMIT {limit} OFFSET {skip};'
             result = await connection.fetch(query_string)
             for row in result:
                 yield cls(loads(row['data']))
