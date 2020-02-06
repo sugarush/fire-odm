@@ -3,7 +3,9 @@
 [![Build Status](https://travis-ci.com/sugarush/fire-odm.svg?branch=master)](https://travis-ci.com/sugarush/fire-odm)
 [![codecov](https://codecov.io/gh/sugarush/fire-odm/branch/master/graph/badge.svg)](https://codecov.io/gh/sugarush/fire-odm)
 
-## [Documentation](https://fire-odm.docs.sugarush.io)
+## Documentation
+
+[Documentation can be found here.](https://fire-odm.docs.sugarush.io)
 
 ## Example
 
