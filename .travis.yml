@@ -5,15 +5,15 @@ python:
 
 services:
   - mongodb
+  - postgresql
 
 install:
   - pip install -r .requirements
   - pip install coverage codecov
-  - source .venv-activate
 
 script:
   - sleep 15 # wait for mongodb to be able to accept connections
-  - coverage run --source "${MODULE}" --module "unittest" discover --verbose "test"
+  - coverage run --source "fire_odm" --module "unittest" discover --verbose "test"
   - coverage report
 
 after_success:
