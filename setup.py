@@ -19,7 +19,7 @@ setup(
         'motor==2.0.0',
         'ujson==1.35',
         'asyncpg==0.20.1',
-        'fire-asynctest@git+https://github.com/sugarush/fire-asynctest#egg=fire-asynctest-0.0.1',
+        'fire-asynctest@git+https://github.com/sugarush/fire-asynctest@master',
         'ipython'
     ]
 )
