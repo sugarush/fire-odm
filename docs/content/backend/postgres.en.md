@@ -9,7 +9,7 @@ weight: 15
 Find all records in a table.
 
 ```python
-from fire_odm import PostgresDBModel, Field
+from sugar_odm import PostgresDBModel, Field
 
 class Model(PostgresDBModel):
   field = Field()
@@ -27,7 +27,7 @@ await Model.add([
 Find a record using the `WHERE` clause.
 
 ```python
-from fire_odm import PostgresDBModel, Field
+from sugar_odm import PostgresDBModel, Field
 
 class Model(PostgresDBModel):
   field = Field()
@@ -45,7 +45,7 @@ await Model.add([
 Limit the number of results.
 
 ```python
-from fire_odm import PostgresDBModel, Field
+from sugar_odm import PostgresDBModel, Field
 
 class Model(PostgresDBModel):
   field = Field()
@@ -63,7 +63,7 @@ await Model.add([
 Skip a number of results.
 
 ```python
-from fire_odm import PostgresDBModel, Field
+from sugar_odm import PostgresDBModel, Field
 
 class Model(PostgresDBModel):
   field = Field()

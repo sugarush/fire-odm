@@ -11,7 +11,7 @@ A computed property is only generated when the model is serialized, which happen
 {{% /notice %}}
 
 ```python
-from fire_odm import MemoryModel, Field
+from sugar_odm import MemoryModel, Field
 
 class Data(MemoryModel):
   first = Field(required=True)

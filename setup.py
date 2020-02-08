@@ -3,19 +3,19 @@ __author__ = 'Paul Severance'
 from setuptools import setup
 
 setup(
-    name='fire-odm',
+    name='sugar-odm',
     version='0.0.1',
     author='Paul Severance',
     author_email='paul.severance@gmail.com',
-    url='https://github.com/sugarush/fire-odm',
+    url='https://github.com/sugarush/sugar-odm',
     packages=[
-        'fire_odm',
-        'fire_odm.backend',
-        'fire_odm.controller'
+        'sugar_odm',
+        'sugar_odm.backend',
+        'sugar_odm.controller'
     ],
     description='An asynchronous ODM for MongoDB and Postgres.',
     install_requires=[
-        'fire-asynctest@git+https://github.com/sugarush/fire-asynctest@master',
+        'sugar-asynctest@git+https://github.com/sugarush/sugar-asynctest@master',
         'inflection',
         'motor',
         'ujson',

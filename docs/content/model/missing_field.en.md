@@ -7,7 +7,7 @@ weight: 10
 If a field is marked as required, and is missing when validated/saved, an exception will be raised.
 
 ```python
-from fire_odm import MemoryModel, Field
+from sugar_odm import MemoryModel, Field
 
 class Data(MemoryModel):
   field = Field(required=True)

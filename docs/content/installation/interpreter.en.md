@@ -12,7 +12,7 @@ pip install ipython
 
 From the IPython interpreter one can easily create, read, update and delete records:
 ```python
-from fire_odm import MemoryModel, Model, Field
+from sugar_odm import MemoryModel, Model, Field
 
 class Name(Model):
   first = Field(required=True)

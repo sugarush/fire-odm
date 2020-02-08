@@ -7,7 +7,7 @@ weight: 1
 The classmethod `add_field` exists to create recursive tree structures.
 
 ```python
-from fire_odm import MemoryModel, Field
+from sugar_odm import MemoryModel, Field
 
 class Comment(MemoryModel):
   text = Field(required=True)

@@ -10,4 +10,4 @@ pre: '<b>1. </b>'
 
 # Installation
 
-Fire ODM Installation
+Sugar ODM Installation

@@ -7,7 +7,7 @@ weight: 5
 A model can be updated with a dictionary or keyword arguments, as so:
 
 ```python
-from fire_odm import MemoryModel, Field
+from sugar_odm import MemoryModel, Field
 
 class Data(MemoryModel):
   field = Field()

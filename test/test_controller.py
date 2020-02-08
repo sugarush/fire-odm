@@ -1,9 +1,9 @@
 from unittest import skip
 
-from fire_asynctest import AsyncTestCase
+from sugar_asynctest import AsyncTestCase
 
-from fire_odm import MongoDBModel, Model, Field
-from fire_odm import MongoDB
+from sugar_odm import MongoDBModel, Model, Field
+from sugar_odm import MongoDB
 
 
 class ControllerTest(AsyncTestCase):

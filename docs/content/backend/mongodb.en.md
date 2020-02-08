@@ -12,7 +12,7 @@ is the documentation for **PyMongo's** `find` method.
 ### Example
 
 ```python
-from fire_odm import MongoDBModel, Field
+from sugar_odm import MongoDBModel, Field
 
 class Model(MongoDBModel):
 
@@ -52,7 +52,7 @@ await Model.add([
 Specifies the documents to be returned.
 
 ```python
-from fire_odm import MongoDBModel, Field
+from sugar_odm import MongoDBModel, Field
 
 class Model(MongoDBModel):
   field = Field()
@@ -70,7 +70,7 @@ await Model.add([
 Limits the number of results.
 
 ```python
-from fire_odm import MongoDBModel, Field
+from sugar_odm import MongoDBModel, Field
 
 class Model(MongoDBModel):
   field = Field()
@@ -88,7 +88,7 @@ await Model.add([
 Skips a number of records.
 
 ```python
-from fire_odm import MongoDBModel, Field
+from sugar_odm import MongoDBModel, Field
 
 class Model(MongoDBModel):
   field = Field()
@@ -106,7 +106,7 @@ await Model.add([
 The fields which should be returned.
 
 ```python
-from fire_odm import MongoDBModel, Field
+from sugar_odm import MongoDBModel, Field
 
 class Model(MongoDBModel):
   field = Field()

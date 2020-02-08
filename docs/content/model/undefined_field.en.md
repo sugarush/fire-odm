@@ -7,7 +7,7 @@ weight: 15
 IF you try to set a field on a model which has not been defined, you will receive an exception.
 
 ```python
-from fire_odm import MemoryModel
+from sugar_odm import MemoryModel
 
 class Data(MemoryModel):
   pass

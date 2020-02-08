@@ -9,7 +9,7 @@ The **MemoryModel** query system relies on simple key matching.
 ## Example
 
 ```python
-from fire_odm import MemoryModel, Field
+from sugar_odm import MemoryModel, Field
 
 class Data(MemoryModel):
   field = Field()

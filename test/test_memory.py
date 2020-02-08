@@ -1,8 +1,8 @@
 from unittest import skip
 
-from fire_asynctest import AsyncTestCase
+from sugar_asynctest import AsyncTestCase
 
-from fire_odm import MemoryModel, Model, Field
+from sugar_odm import MemoryModel, Model, Field
 
 
 class MemoryModelTest(AsyncTestCase):

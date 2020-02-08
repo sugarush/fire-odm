@@ -1,8 +1,8 @@
 import asyncio
 
-from fire_asynctest import AsyncTestCase
+from sugar_asynctest import AsyncTestCase
 
-from fire_odm import PostgresDB, PostgresDBModel, Field
+from sugar_odm import PostgresDB, PostgresDBModel, Field
 
 
 class PostgresDBTest(AsyncTestCase):

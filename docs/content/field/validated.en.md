@@ -7,7 +7,7 @@ weight: 15
 A field can be validated with an instance method.
 
 ```python
-from fire_odm import MemoryModel, Field
+from sugar_odm import MemoryModel, Field
 
 class Data(MemoryModel):
   name = Field(validated='validate_name')

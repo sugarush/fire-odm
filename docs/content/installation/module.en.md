@@ -7,5 +7,5 @@ weight: 5
 The Fire ODM module can be installed directly from GitHub with the following command:
 
 ```shell
-pip install git+https://github.com/sugarush/fire-odm@master
+pip install git+https://github.com/sugarush/sugar-odm@master
 ```

@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from fire_odm import ModelMeta, Field
+from sugar_odm import ModelMeta, Field
 
 
 class ModelMetaTest(TestCase):
