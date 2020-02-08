@@ -4,7 +4,7 @@ date: 2019-02-09T19:01:15-05:00
 weight: 10
 ---
 
-Fire ODM can be used with the IPython interpreter.
+Sugar ODM can be used with the IPython interpreter.
 
 ```shell
 pip install ipython

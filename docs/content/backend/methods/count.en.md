@@ -9,7 +9,7 @@ weight: 5
 Returns the number of records in the table/collection.
 
 ```python
-from fire_odm import MemoryModel, Field
+from sugar_odm import MemoryModel, Field
 
 class Data(MemoryModel):
   field = Field()

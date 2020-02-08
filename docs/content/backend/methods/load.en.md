@@ -9,7 +9,7 @@ weight: 8
 Loads a record from the database, by its ID.
 
 ```python
-from fire_odm import MemoryModel
+from sugar_odm import MemoryModel
 
 class Data(MemoryModel):
   pass

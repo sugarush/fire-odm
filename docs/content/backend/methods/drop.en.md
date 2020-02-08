@@ -9,7 +9,7 @@ weight: 10
 Drops a table/collection.
 
 ```python
-from fire_odm import MemoryModel
+from sugar_odm import MemoryModel
 
 class Data(MemoryModel):
   pass

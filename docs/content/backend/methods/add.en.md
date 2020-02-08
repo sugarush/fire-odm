@@ -11,7 +11,7 @@ Adds a model or models to the database and returns it/them.
 Single-model example.
 
 ```python
-from fire_odm import MemoryModel, Field
+from sugar_odm import MemoryModel, Field
 
 class Data(MemoryModel):
   field = Field()
@@ -22,7 +22,7 @@ await Data.add({ 'field': 'one' })
 Multi-model example.
 
 ```python
-from fire_odm import MemoryModel, Field
+from sugar_odm import MemoryModel, Field
 
 class Data(MemoryModel):
   field = Field()

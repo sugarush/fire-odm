@@ -9,7 +9,7 @@ weight: 2
 Finds a model by its ID.
 
 ```python
-from fire_odm import MemoryModel
+from sugar_odm import MemoryModel
 
 class Data(MemoryModel):
   pass

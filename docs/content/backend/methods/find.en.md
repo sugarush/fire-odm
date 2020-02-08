@@ -9,7 +9,7 @@ weight: 1
 Finds models by query.
 
 ```python
-from fire_odm import MemoryModel, Field
+from sugar_odm import MemoryModel, Field
 
 class Data(MemoryModel):
   field = Field()

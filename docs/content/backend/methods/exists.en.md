@@ -9,7 +9,7 @@ weight: 4
 Determines if ID is in the database.
 
 ```python
-from fire_odm import MemoryModel
+from sugar_odm import MemoryModel
 
 class Data(MemoryModel):
   pass
