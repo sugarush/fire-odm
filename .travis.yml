@@ -13,7 +13,7 @@ install:
 
 script:
   - sleep 15 # wait for mongodb to be able to accept connections
-  - coverage run --source "fire_odm" --module "unittest" discover --verbose "test"
+  - coverage run --source "sugar_odm" --module "unittest" discover --verbose "test"
   - coverage report
 
 after_success:
