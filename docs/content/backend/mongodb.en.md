@@ -9,7 +9,7 @@ weight: 10
 [Here](https://pymongo.readthedocs.io/en/3.10.0/api/pymongo/collection.html#pymongo.collection.Collection.find)
 is the documentation for **PyMongo's** `find` method.
 
-### Example
+## Example
 
 ```python
 from sugar_odm import MongoDBModel, Field
@@ -47,7 +47,7 @@ await Model.add([
 [ model async for model in Model.find({ '$text': { '$search': 'beta' } }) ]
 ```
 
-### Filter
+## Filter
 
 Specifies the documents to be returned.
 
@@ -65,7 +65,7 @@ await Model.add([
 [ model async for model in Model.find({ 'field': 'beta' }) ]
 ```
 
-### Limit
+## Limit
 
 Limits the number of results.
 
@@ -83,7 +83,7 @@ await Model.add([
 [ model async for model in Model.find(limit=1) ]
 ```
 
-### Skip
+## Skip
 
 Skips a number of records.
 
@@ -101,7 +101,7 @@ await Model.add([
 [ model async for model in Model.find(limit=1, skip=1) ]
 ```
 
-### Projection
+## Projection
 
 The fields which should be returned.
 
