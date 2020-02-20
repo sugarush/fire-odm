@@ -257,6 +257,23 @@ class PostgresDBModelTest(AsyncTestCase):
 
         await Test.drop()
 
+    async def test_save_update_with_quote(self):
+
+        class Test(PostgresDBModel):
+            field = Field()
+
+        model = Test({ 'field': 'value' })
+
+        await model.save()
+
+        model.field = "a string with a ' "
+
+        await model.save()
+
+        self.assertEqual(model.field, "a string with a ' ")
+
+        await Test.drop()
+
     async def test_load(self):
 
         class Test(PostgresDBModel):

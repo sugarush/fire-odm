@@ -8,6 +8,15 @@ from .. model import Model
 from .. field import Field
 
 
+def psql_escape_dict(json):
+    for key, value in json.items():
+        if isinstance(value, str):
+            json[key] = value.replace('\'', '\'\'')
+        elif isinstance(value, dict):
+            escape(dict)
+    return json
+
+
 class PostgresDB(object):
 
     connections = { }
@@ -169,7 +178,7 @@ class PostgresDBModel(Model):
             raise Exception('Invalid argument to PostgresDBModel.add: must be a list or dict.')
 
     async def save(self):
-        json = self.serialize(computed=True, reset=True)
+        json = psql_escape_dict(self.serialize(computed=True, reset=True))
         async with await self._acquire() as connection:
             if self.id and await self.exists(self.id):
                 result = await connection.fetch(f'UPDATE {self._table} SET data = \'{dumps(json)}\' WHERE data ->> \'_id\' = \'{self.id}\' RETURNING data;')
