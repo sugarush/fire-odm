@@ -13,7 +13,7 @@ def psql_escape_dict(json):
         if isinstance(value, str):
             json[key] = value.replace('\'', '\'\'')
         elif isinstance(value, dict):
-            escape(dict)
+            psql_escape_dictescape(dict)
     return json
 
 
