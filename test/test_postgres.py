@@ -1,4 +1,5 @@
 import asyncio
+from unittest import skip
 
 from sugar_asynctest import AsyncTestCase
 
@@ -167,19 +168,9 @@ class PostgresDBModelTest(AsyncTestCase):
 
         await Test.add([{ 'field': 'alpha' }, { 'field': 'beta' }])
 
-        model = await Test.find_one({ 'WHERE': 'data->>\'field\' = \'beta\'' })
+        model = await Test.find_one({ 'field': 'beta' })
 
         self.assertEqual(model.field, 'beta')
-
-        await Test.drop()
-
-    async def test_find_one_invalid(self):
-
-        class Test(PostgresDBModel):
-            field = Field()
-
-        with self.assertRaises(Exception):
-            await Test.find_one({ 'WHERE': ';' })
 
         await Test.drop()
 
@@ -203,25 +194,9 @@ class PostgresDBModelTest(AsyncTestCase):
 
         await Test.add([{ 'field': 'alpha' }, { 'field': 'beta' }])
 
-        models = [ model async for model in Test.find({
-            'WHERE': 'data->>\'field\' = \'alpha\''
-        }) ]
+        models = [ model async for model in Test.find({ 'field': 'alpha' }) ]
 
         self.assertEqual(len(models), 1)
-
-        await Test.drop()
-
-    async def test_find_invalid(self):
-
-        class Test(PostgresDBModel):
-            field = Field()
-
-        await Test.add([{ 'field': 'alpha' }, { 'field': 'beta' }])
-
-        with self.assertRaises(Exception):
-            [ model async for model in Test.find({
-                'WHERE': ';'
-            }) ]
 
         await Test.drop()
 

@@ -6,15 +6,7 @@ from asyncpg import create_pool, DuplicateTableError
 from .. util import serialize
 from .. model import Model
 from .. field import Field
-
-
-def psql_escape_dict(json):
-    for key, value in json.items():
-        if isinstance(value, str):
-            json[key] = value.replace('\'', '\'\'')
-        elif isinstance(value, dict):
-            psql_escape_dict(value)
-    return json
+from .. query import Query
 
 
 class PostgresDB(object):
@@ -67,7 +59,7 @@ class PostgresDBModel(Model):
             cls.__connection__ = { }
 
         cls.__connection__.update({
-            'database': cls.__database__.get('name', 'postgres')
+            'database': cls.__database__.get('name')
         })
 
         pool = await PostgresDB.connect(**cls.__connection__)
@@ -121,13 +113,13 @@ class PostgresDBModel(Model):
     @classmethod
     async def exists(cls, id):
         async with await cls._acquire() as connection:
-            result = await connection.fetch(f'SELECT count(*) FROM {cls._table} WHERE data->>\'_id\' = \'{id}\';')
+            result = await connection.fetch(f'SELECT count(*) FROM {cls._table} WHERE data->>\'_id\' = $1;', id)
             return result[0]['count']
 
     @classmethod
     async def find_by_id(cls, id, **kargs):
         async with await cls._acquire() as connection:
-            result = await connection.fetch(f'SELECT data FROM {cls._table} WHERE data->>\'_id\' = \'{id}\';')
+            result = await connection.fetch(f'SELECT data FROM {cls._table} WHERE data->>\'_id\' = $1;', id)
             if len(result):
                 return cls(loads(result[0]['data']))
             else:
@@ -136,13 +128,9 @@ class PostgresDBModel(Model):
     @classmethod
     async def find_one(cls, query={ }, **kargs):
         async with await cls._acquire() as connection:
-            query_string = f'SELECT data FROM {cls._table} '
-            for (key, value) in query.items():
-                query_string += f'{key} {value} '
-            if query_string.find(';') >= 0:
-                raise Exception('Your query must not contain any ;\'s.')
-            query_string += f'LIMIT 1;'
-            result = await connection.fetch(query_string)
+            query = Query(cls._table, query, limit=1)
+            string, arguments = query.to_postgres()
+            result = await connection.fetch(string, *arguments)
             if len(result):
                 return cls(loads(result[0]['data']))
             else:
@@ -151,13 +139,9 @@ class PostgresDBModel(Model):
     @classmethod
     async def find(cls, query={ }, limit=100, skip=0, **kargs):
         async with await cls._acquire() as connection:
-            query_string = f'SELECT data FROM {cls._table} '
-            for (key, value) in query.items():
-                query_string += f'{key} {value} '
-            if query_string.find(';') >= 0:
-                raise Exception('Your query must not contain any ;\'s.')
-            query_string += f'LIMIT {limit} OFFSET {skip};'
-            result = await connection.fetch(query_string)
+            query = Query(cls._table, query, limit, skip)
+            string, arguments = query.to_postgres()
+            result = await connection.fetch(string, *arguments)
             for row in result:
                 yield cls(loads(row['data']))
 
@@ -178,19 +162,19 @@ class PostgresDBModel(Model):
             raise Exception('Invalid argument to PostgresDBModel.add: must be a list or dict.')
 
     async def save(self):
-        json = psql_escape_dict(self.serialize(computed=True, reset=True))
+        json = self.serialize(computed=True, reset=True)
         async with await self._acquire() as connection:
             if self.id and await self.exists(self.id):
-                result = await connection.fetch(f'UPDATE {self._table} SET data = \'{dumps(json)}\' WHERE data ->> \'_id\' = \'{self.id}\' RETURNING data;')
+                result = await connection.fetch(f'UPDATE {self._table} SET data = $1 WHERE data ->> \'_id\' = $2 RETURNING data;', dumps(json), self.id)
                 self.update(loads(result[0]['data']))
             else:
-                result = await connection.fetch(f'INSERT INTO {self._table} VALUES (\'{dumps(json)}\') RETURNING data;')
+                result = await connection.fetch(f'INSERT INTO {self._table} VALUES ($1) RETURNING data;', dumps(json))
                 self.update(loads(result[0]['data']))
 
     async def load(self, **kargs):
         if self.id and await self.exists(self.id):
             async with await self._acquire() as connection:
-                result = await connection.fetch(f'SELECT data FROM {self._table} WHERE data->>\'_id\' = \'{self.id}\';')
+                result = await connection.fetch(f'SELECT data FROM {self._table} WHERE data->>\'_id\' = $1;', self.id)
                 self.update(loads(result[0]['data']))
         else:
             raise Exception('Missing model id or model id does not exist.')
@@ -198,7 +182,7 @@ class PostgresDBModel(Model):
     async def delete(self):
         if self.id and await self.exists(self.id):
             async with await self._acquire() as connection:
-                result = await connection.fetch(f'DELETE FROM {self._table} WHERE data->>\'_id\' = \'{self.id}\' RETURNING data->>\'_id\';')
+                result = await connection.fetch(f'DELETE FROM {self._table} WHERE data->>\'_id\' = $1 RETURNING data->>\'_id\';', self.id)
                 deleted_id = result[0].get('?column?')
                 if deleted_id == self.id:
                     self._data = { }
