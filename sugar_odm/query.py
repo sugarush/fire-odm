@@ -13,8 +13,8 @@ class Query(dict):
             raise Exception('Both table and query must be specified.')
         super(Query, self).__init__(query)
         self.table = table
-        self.limit = limit
-        self.skip = skip
+        self.limit = int(limit)
+        self.skip = int(skip)
 
     def to_postgres(self):
         query = f'SELECT data FROM {self.table} '
@@ -25,10 +25,13 @@ class Query(dict):
 
             modifiers = pop_modifiers(self)
 
-            if len(self) == 1:
+            if modifiers:
+                pass
+            elif len(self) == 1:
                 for (key, value) in self.items():
                     query += f'WHERE data->>${count} = ${count + 1} '
                     arguments.extend([ key, value ])
+                    count += 2
             else:
                 query += 'WHERE ('
                 for (key, value) in self.items():
@@ -38,6 +41,7 @@ class Query(dict):
                 query = query[:-5] # remove the trailing ' AND '
                 query += ') '
 
-        query += f'LIMIT {self.limit} OFFSET {self.skip};'
+        query += f'LIMIT ${count}::bigint OFFSET ${count + 1}::bigint;'
+        arguments.extend([ self.limit, self.skip ])
 
         return query, arguments
