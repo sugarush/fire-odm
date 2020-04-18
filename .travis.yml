@@ -7,6 +7,9 @@ services:
   - mongodb
   - postgresql
 
+addons:
+  rethinkdb: 2.4.0
+  
 install:
   - pip install -r .requirements
   - pip install coverage codecov
