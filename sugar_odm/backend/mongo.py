@@ -218,7 +218,7 @@ class MongoDBModel(Model, RelationshipMixin):
 
     async def delete(self):
         await self._connect()
-        if self.id and self.exists(self.id):
+        if self.id and await self.exists(self.id):
             result = await self._collection \
                 .delete_one({ '_id': ObjectId(self.id) })
             if result:
