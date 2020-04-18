@@ -4,7 +4,7 @@ import asyncio
 from sugar_asynctest import AsyncTestCase
 
 from sugar_odm import Model, Field
-from sugar_odm.backend.mongodb import MongoDB, MongoDBModel
+from sugar_odm.backend.mongo import MongoDB, MongoDBModel
 
 
 class MongoDBTest(TestCase):

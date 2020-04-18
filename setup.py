@@ -13,13 +13,14 @@ setup(
         'sugar_odm.backend',
         'sugar_odm.controller'
     ],
-    description='An asynchronous ODM for MongoDB and Postgres.',
+    description='An asynchronous ODM for MongoDB, Postgres and RethinkDB.',
     install_requires=[
         'sugar-asynctest@git+https://github.com/sugarush/sugar-asynctest@master',
         'inflection',
         'motor',
         'ujson',
         'asyncpg',
-        'ipython'
+        'ipython',
+        'rethinkdb'
     ]
 )

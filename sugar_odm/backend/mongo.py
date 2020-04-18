@@ -1,4 +1,3 @@
-import inflection
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import ReturnDocument
@@ -219,7 +218,7 @@ class MongoDBModel(Model, RelationshipMixin):
 
     async def delete(self):
         await self._connect()
-        if self.id:
+        if self.id and self.exists(self.id):
             result = await self._collection \
                 .delete_one({ '_id': ObjectId(self.id) })
             if result:

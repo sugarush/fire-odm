@@ -5,5 +5,6 @@ from . model import Model
 from . query import Query
 
 from . backend.memory import MemoryModel
-from . backend.mongodb import MongoDB, MongoDBModel
+from . backend.mongo import MongoDB, MongoDBModel
 from . backend.postgres import PostgresDB, PostgresDBModel
+from . backend.rethink import RethinkDB, RethinkDBModel

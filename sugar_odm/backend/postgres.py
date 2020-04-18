@@ -3,10 +3,10 @@ from json import loads, dumps
 
 from asyncpg import create_pool, DuplicateTableError
 
-from .. util import serialize
 from .. model import Model
 from .. field import Field
 from .. query import Query
+from .. util import serialize
 
 
 def convert_datetime(datetime):

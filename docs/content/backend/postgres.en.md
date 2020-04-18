@@ -12,6 +12,17 @@ Find all records in a table.
 from sugar_odm import PostgresDBModel, Field
 
 class Model(PostgresDBModel):
+
+  __connection__ = {
+    'user': 'username',
+    'password': 'password',
+    'host': 'localhost'
+  }
+
+  __database__ = {
+    'name': 'postgres'
+  }
+
   field = Field()
 
 await Model.add([
@@ -24,7 +35,7 @@ await Model.add([
 
 ## Query
 
-Find a record using the `WHERE` clause.
+Find a record using the _Model Query Language_ which is similar to the _MongoDB Query Language_:
 
 ```python
 from sugar_odm import PostgresDBModel, Field
@@ -37,7 +48,7 @@ await Model.add([
   { 'field': 'beta' }
 ])
 
-[ model async for model in Model.find({ 'WHERE': 'data->>\'field\' = \'beta\'' }) ]
+[ model async for model in Model.find({ 'field': 'beta' }) ]
 ```
 
 ## Limit
