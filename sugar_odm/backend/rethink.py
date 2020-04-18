@@ -64,8 +64,8 @@ class RethinkDBModel(Model):
         cls._connection = connection
 
         try:
-            cls._database = r.db(cls.__connection__.get('db'))
             cls._query = r.table(cls._table)
+            cls._database = r.db(cls.__connection__.get('db'))
             await r.table_create(cls._table).run(cls._connection)
         except:
             pass
@@ -105,15 +105,21 @@ class RethinkDBModel(Model):
 
     @classmethod
     async def find_by_id(cls, id):
-        raise NotImplementedError('RethinkDBModel.find_by_id not implemented.')
+        await cls._connect()
+        result = await cls._query.get(id).run(cls._connection)
+        if result:
+            return cls(result)
+        return None
 
     @classmethod
-    async def find_one(cls, *args, **kargs):
-        raise NotImplementedError('RethinkDBModel.find_one not implemented.')
+    async def find_one(cls, query={ }, **kargs):
+        async for result in await cls._query.filter(query).run(cls._connection):
+            return cls(result)
 
     @classmethod
-    async def find(cls, *args, **kargs):
-        raise NotImplementedError('RethinkDBModel.find not implemented.')
+    async def find(cls, query={ }, **kargs):
+        async for result in await cls._query.filter(query).run(cls._connection):
+            yield cls(result)
 
     @classmethod
     async def add(cls, args):

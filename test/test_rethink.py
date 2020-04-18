@@ -139,3 +139,50 @@ class RethinkDBModelTest(AsyncTestCase):
 
         with self.assertRaises(Exception):
             await Test.count()
+
+    async def test_find_by_id(self):
+
+        class Test(RethinkDBModel):
+            field = Field()
+
+        alpha = Test({ 'field': 'value' })
+
+        await alpha.save()
+
+        beta = await Test.find_by_id(alpha.id)
+
+        self.assertEqual(alpha.id, beta.id)
+
+        await Test.drop()
+
+    async def test_find_one(self):
+
+        class Test(RethinkDBModel):
+            field = Field()
+
+        await Test.add([
+            { 'field': 'alpha' },
+            { 'field': 'beta' }
+        ])
+
+        test = await Test.find_one({ 'field': 'beta' })
+
+        self.assertEqual(test.field, 'beta')
+
+        await Test.drop()
+
+    async def test_find(self):
+
+        class Test(RethinkDBModel):
+            field = Field()
+
+        await Test.add([
+            { 'field': 'alpha' },
+            { 'field': 'beta' }
+        ])
+
+        models = [ model async for model in Test.find() ]
+
+        self.assertEqual(len(models), 2)
+
+        await Test.drop()
