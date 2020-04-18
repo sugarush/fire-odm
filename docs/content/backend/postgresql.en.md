@@ -1,7 +1,7 @@
 ---
-title: 'Postgres'
+title: 'PostgreSQL'
 date: 2020-02-01T20:20:48-05:00
-weight: 15
+weight: 20
 ---
 
 ## Example
