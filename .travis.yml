@@ -8,8 +8,8 @@ services:
   - postgresql
 
 addons:
-  rethinkdb: 2.4.0
-  
+  rethinkdb: 2.3
+
 install:
   - pip install -r .requirements
   - pip install coverage codecov
