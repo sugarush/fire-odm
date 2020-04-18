@@ -10,7 +10,7 @@ from .. query import Query
 
 
 def convert_datetime(datetime):
-    return datetime.timestamp()
+    return datetime.isoformat()
 
 
 class PostgresDB(object):
