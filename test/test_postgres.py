@@ -255,6 +255,7 @@ class PostgresDBModelTest(AsyncTestCase):
         class Test(PostgresDBModel):
             field = Field(type='timestamp')
 
+            # XXX: borrowed from sugar_api.mixin.TimestampMixin
             def timestamp(self, value):
                 if isinstance(value, str):
                     if value.endswith('Z'):
