@@ -15,7 +15,7 @@ install:
   - pip install coverage codecov
 
 script:
-  - rethinkdb --bind-all --daemon # start rethinkdb
+  - rethinkdb --daemon # start rethinkdb
   - sleep 15 # wait for mongodb to be able to accept connections
   - coverage run --source "sugar_odm" --module "unittest" discover --verbose "test"
   - coverage report
