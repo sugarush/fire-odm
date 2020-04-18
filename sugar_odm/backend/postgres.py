@@ -1,5 +1,5 @@
 from uuid import uuid4
-from ujson import loads, dumps
+from json import loads, dumps
 
 from asyncpg import create_pool, DuplicateTableError
 
@@ -7,6 +7,10 @@ from .. util import serialize
 from .. model import Model
 from .. field import Field
 from .. query import Query
+
+
+def convert_datetime(datetime):
+    return datetime.timestamp()
 
 
 class PostgresDB(object):
@@ -165,10 +169,10 @@ class PostgresDBModel(Model):
         json = self.serialize(computed=True, reset=True)
         async with await self._acquire() as connection:
             if self.id and await self.exists(self.id):
-                result = await connection.fetch(f'UPDATE {self._table} SET data = $1 WHERE data ->> \'_id\' = $2 RETURNING data;', dumps(json), self.id)
+                result = await connection.fetch(f'UPDATE {self._table} SET data = $1 WHERE data ->> \'_id\' = $2 RETURNING data;', dumps(json, default=convert_datetime), self.id)
                 self.update(loads(result[0]['data']))
             else:
-                result = await connection.fetch(f'INSERT INTO {self._table} VALUES ($1) RETURNING data;', dumps(json))
+                result = await connection.fetch(f'INSERT INTO {self._table} VALUES ($1) RETURNING data;', dumps(json, default=convert_datetime))
                 self.update(loads(result[0]['data']))
 
     async def load(self, **kargs):

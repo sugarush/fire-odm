@@ -1,5 +1,6 @@
 import asyncio
 from unittest import skip
+from datetime import datetime
 
 from sugar_asynctest import AsyncTestCase
 
@@ -246,6 +247,27 @@ class PostgresDBModelTest(AsyncTestCase):
         await model.save()
 
         self.assertEqual(model.field, "a string with a ' ")
+
+        await Test.drop()
+
+    async def test_save_with_datetime(self):
+
+        class Test(PostgresDBModel):
+            field = Field(type='timestamp')
+
+            def timestamp(self, value):
+                if isinstance(value, str):
+                    if value.endswith('Z'):
+                        value = value[:-1] # Remove the Z from the javascript timestamp
+                    return datetime.fromisoformat(value)
+                elif isinstance(value, datetime):
+                    return value
+                else:
+                    return value
+
+        model = Test({ 'field': datetime.utcnow() })
+
+        await model.save()
 
         await Test.drop()
 
