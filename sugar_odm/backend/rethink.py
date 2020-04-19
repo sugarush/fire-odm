@@ -185,3 +185,11 @@ class RethinkDBModel(Model):
         else:
             message = 'No document ID, cannot delete.'
             raise Exception(message)
+
+    async def changes(self):
+        await self._connect()
+        if self.id and await self.exists(self.id):
+            return await self._query.get(self.id).changes().run(self._connection)
+        else:
+            message = 'No document ID or document ID does not exist'
+            raise Exception(message)

@@ -1,3 +1,4 @@
+import asyncio
 from unittest import skip
 
 from sugar_asynctest import AsyncTestCase
@@ -184,5 +185,31 @@ class RethinkDBModelTest(AsyncTestCase):
         models = [ model async for model in Test.find() ]
 
         self.assertEqual(len(models), 2)
+
+        await Test.drop()
+
+    async def test_changes(self):
+
+        class Test(RethinkDBModel):
+            field = Field()
+
+        alpha, beta = await Test.add([
+            { 'field': 'alpha' },
+            { 'field': 'beta' }
+        ])
+
+        async def read():
+            called = False
+            async for change in await alpha.changes():
+                called = True
+                break
+            self.assertTrue(called)
+
+        async def write():
+            await asyncio.sleep(1)
+            alpha.field = 'test'
+            await alpha.save()
+
+        await asyncio.gather(read(), write())
 
         await Test.drop()
