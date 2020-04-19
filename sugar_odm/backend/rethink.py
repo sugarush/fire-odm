@@ -101,7 +101,7 @@ class RethinkDBModel(Model):
     @classmethod
     async def exists(cls, id):
         await cls._connect()
-        if await cls._query.get(id).count().run(cls._connection):
+        if await cls._query.get_all(id).count().run(cls._connection):
             return True
         return False
 
