@@ -4,5 +4,4 @@ rethinkdb
 
 inflection==0.3.1
 motor==2.0.0
-ujson==1.35
 asyncpg==0.20.1

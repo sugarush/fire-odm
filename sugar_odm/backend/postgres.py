@@ -166,13 +166,13 @@ class PostgresDBModel(Model):
             raise Exception('Invalid argument to PostgresDBModel.add: must be a list or dict.')
 
     async def save(self):
-        json = self.serialize(computed=True, reset=True)
+        data = self.serialize(computed=True, reset=True)
         async with await self._acquire() as connection:
             if self.id and await self.exists(self.id):
-                result = await connection.fetch(f'UPDATE {self._table} SET data = $1 WHERE data ->> \'_id\' = $2 RETURNING data;', dumps(json, default=convert_datetime), self.id)
+                result = await connection.fetch(f'UPDATE {self._table} SET data = $1 WHERE data ->> \'_id\' = $2 RETURNING data;', dumps(data, default=convert_datetime), self.id)
                 self.update(loads(result[0]['data']))
             else:
-                result = await connection.fetch(f'INSERT INTO {self._table} VALUES ($1) RETURNING data;', dumps(json, default=convert_datetime))
+                result = await connection.fetch(f'INSERT INTO {self._table} VALUES ($1) RETURNING data;', dumps(data, default=convert_datetime))
                 self.update(loads(result[0]['data']))
 
     async def load(self, **kargs):
