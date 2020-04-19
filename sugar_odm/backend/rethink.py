@@ -106,7 +106,7 @@ class RethinkDBModel(Model):
         return False
 
     @classmethod
-    async def find_by_id(cls, id):
+    async def find_by_id(cls, id, **kargs):
         await cls._connect()
         result = await cls._query.get(id).run(cls._connection)
         if result:
