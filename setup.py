@@ -18,7 +18,6 @@ setup(
         'sugar-asynctest@git+https://github.com/sugarush/sugar-asynctest@master',
         'inflection',
         'motor',
-        'ujson',
         'asyncpg',
         'ipython',
         'rethinkdb'
