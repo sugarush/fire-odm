@@ -113,11 +113,13 @@ class RethinkDBModel(Model):
 
     @classmethod
     async def find_one(cls, query={ }, **kargs):
+        await cls._connect()
         async for result in await cls._query.filter(query).run(cls._connection):
             return cls(result)
 
     @classmethod
     async def find(cls, query={ }, **kargs):
+        await cls._connect()
         async for result in await cls._query.filter(query).run(cls._connection):
             yield cls(result)
 
