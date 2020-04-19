@@ -34,6 +34,7 @@ class RethinkDBModel(Model):
     _connection = None
     _database = None
     _query = None
+    r = None
 
     async def operation(self, query):
         raise NotImplemented('RethinkDBModel.operation not implemented.')
@@ -64,6 +65,7 @@ class RethinkDBModel(Model):
         cls._connection = connection
 
         try:
+            cls.r = r
             cls._query = r.table(cls._table)
             cls._database = r.db(cls.__connection__.get('db'))
             await r.table_create(cls._table).run(cls._connection)
