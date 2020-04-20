@@ -10,7 +10,8 @@ Welcome to Sugar ODM's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-
+   content/basics
+   content/classes
 
 Indices and tables
 ==================

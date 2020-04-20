@@ -1,7 +1,26 @@
 
 class Field(object):
+    '''
+    The field object.
 
-    def __init__(self, type=str, primary=False, required=False, related=False, validated=False, computed=False, computed_empty=False, computed_type=False, has_one=False, has_many=False, belongs_to=False, auto_delete=False, validated_before_computed=False, default=False, default_empty=False, default_type=False):
+    :param type: The field type.
+    :param primary: If the field is the primary key.
+    :param required: If the field is required.
+    :param validated: If the field is validated.
+    :param computed: If the field is computed.
+    :param computed_empty: Only computed the field when empty.
+    :param computed_type: Do not convert to `type`, instead use the output of the computed function.
+    :param has_one: The related `Model`.
+    :param has_many: The related `Model`.
+    :param belongs_to: The related `Model`.
+    :param auto_delete: Whether or not to delete the `model` if the `model` it belongs to is deleted.
+    :param validated_before_computed: Whether or not to validate the `field` before it is `computed`.
+    :param default: Synonym for `computed`.
+    :param default_empty: Synonym for `computed_empty`.
+    :param default_type: Synonym for `computed_type`.
+    '''
+
+    def __init__(self, type=str, primary=False, required=False, validated=False, computed=False, computed_empty=False, computed_type=False, has_one=False, has_many=False, belongs_to=False, auto_delete=False, validated_before_computed=False, default=False, default_empty=False, default_type=False):
         self._controller = None
         self._model = None
         self.name = None
