@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='sugar-odm',
-    version='0.0.1',
+    version='0.0.2',
     author='Paul Severance',
     author_email='paul.severance@gmail.com',
     url='https://github.com/sugarush/sugar-odm',

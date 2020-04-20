@@ -1,7 +1,7 @@
 
 class Field(object):
 
-    def __init__(self, type=str, primary=False, required=False, related=False, validated=False, computed=False, computed_empty=False, computed_type=False, has_one=False, has_many=False, belongs_to=False, auto_delete=False, validated_before_computed=False):
+    def __init__(self, type=str, primary=False, required=False, related=False, validated=False, computed=False, computed_empty=False, computed_type=False, has_one=False, has_many=False, belongs_to=False, auto_delete=False, validated_before_computed=False, default=False, default_empty=False, default_type=False):
         self._controller = None
         self._model = None
         self.name = None
@@ -10,9 +10,14 @@ class Field(object):
         self.required = required
         self.validated = validated
         self.validated_before_computed = validated_before_computed
-        self.computed = computed
-        self.computed_empty = computed_empty
-        self.computed_type = computed_type
+        if default:
+            self.computed = default
+            self.computed_empty = default_empty
+            self.computed_type = default_type
+        else:
+            self.computed = computed
+            self.computed_empty = computed_empty
+            self.computed_type = computed_type
         self.has_one = has_one
         self.has_many = has_many
         self.belongs_to = belongs_to
