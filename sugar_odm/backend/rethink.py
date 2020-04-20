@@ -9,6 +9,7 @@ from .. util import serialize
 
 class RethinkDB(object):
     '''
+    The RethinkDB connection cache.
     '''
 
     connections = { }
@@ -33,6 +34,7 @@ class RethinkDB(object):
 
 class RethinkDBModel(Model):
     '''
+    A RethinkDB backed model.
     '''
 
     _connection = None

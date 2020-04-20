@@ -27,6 +27,7 @@ def find(db, query={ }):
 
 class MemoryModel(Model):
     '''
+    A memory backed model.
     '''
 
     @classmethod

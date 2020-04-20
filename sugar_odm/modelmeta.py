@@ -7,15 +7,29 @@ from . field import Field
 __registry__ = { }
 
 def register_class(name, cls):
+    '''
+    Register a class by name.
+
+    :param name: The name of the class.
+    :param cls: The class itself.
+    '''
     global __registry__
     __registry__[name] = cls
 
 def get_class(name):
+    '''
+    Get a class by name.
+
+    :param name: The name of the class.
+    '''
     global __registry__
     return __registry__[name]
 
 
 class ModelMeta(type):
+    '''
+    The metaclass which interprets, organizes, and validates fields.
+    '''
 
     def __init__(cls, name, bases, attrs):
         super(ModelMeta, cls).__init__(name, bases, attrs)

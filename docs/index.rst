@@ -12,6 +12,7 @@ Welcome to Sugar ODM's documentation!
 
    content/basics
    content/classes
+   content/functions
 
 Indices and tables
 ==================

@@ -1,6 +1,6 @@
 from . modelmeta import get_class
 from . field import Field
-from . modelmeta import ModelMeta
+from . modelmeta import ModelMeta, register_class, get_class
 from . model import Model
 from . query import Query
 

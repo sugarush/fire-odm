@@ -11,42 +11,78 @@ from . controller.belongs_to import BelongsTo
 
 
 class Model(object, metaclass=ModelMeta):
+    '''
+    The general model which can be adapted to suit different backends.
+
+    :param dictionary: A dictionary of values (may be nested).
+    :param \*\*kargs: Key-word arguments which `dictionary` will be updated with.
+    '''
 
     @classmethod
     async def count(cls):
+        '''
+        Returns the count of models in the database.
+        '''
         raise NotImplementedError('Model.count not implemented.')
 
     @classmethod
     async def drop(cls):
+        '''
+        Removes all models from the database.
+        '''
         raise NotImplementedError('Model.drop not implemented.')
 
     @classmethod
     async def exists(cls, id):
+        '''
+        Determines if `id` exists in the database.
+        '''
         raise NotImplementedError('Model.exists not implemented.')
 
     @classmethod
     async def find_by_id(cls, id):
+        '''
+        Return a `model` for `id`.
+        '''
         raise NotImplementedError('Model.find_by_id not implemented.')
 
     @classmethod
-    async def find_one(cls, *args, **kargs):
+    async def find_one(cls, query, *args, **kargs):
+        '''
+        Return a single `model` for `query`.
+        '''
         raise NotImplementedError('Model.find_one not implemented.')
 
     @classmethod
-    async def find(cls, *args, **kargs):
+    async def find(cls, query, *args, **kargs):
+        '''
+        Iterate over all `models` matching `query`.
+        '''
         raise NotImplementedError('Model.find not implemented.')
 
     @classmethod
     async def add(cls, *args):
+        '''
+        Add a `model` or list of `models` to the database.
+        '''
         raise NotImplementedError('Model.add not implemented.')
 
     async def save(self):
+        '''
+        Persist a `model`'s data to the database.
+        '''
         raise NotImplementedError('Model.save not implemented.')
 
     async def load(self):
+        '''
+        Load a `model`'s data from the database.
+        '''
         raise NotImplementedError('Model.load not implemented.')
 
     async def delete(self):
+        '''
+        Remove a `model` from the database.
+        '''
         raise NotImplementedError('Model.delete not implemented.')
 
     def populate_controllers(self):
@@ -101,6 +137,9 @@ class Model(object, metaclass=ModelMeta):
 
     @property
     def id(self):
+        '''
+        The `id` of the `model`.
+        '''
         if self._primary:
             return self.get(self._primary)
         else:
@@ -165,6 +204,9 @@ class Model(object, metaclass=ModelMeta):
         return None
 
     def set(self, key, value, direct=False):
+        '''
+        Set the `model`'s `key` to `value`.
+        '''
         field = self._check_field(key)
         controller = self._get_controller(field.name)
         if controller:
@@ -207,6 +249,9 @@ class Model(object, metaclass=ModelMeta):
             raise Exception('Model field error.')
 
     def get(self, key, default=None, direct=False):
+        '''
+        Get a `model`'s `key`.
+        '''
         field = self._check_field(key)
         controller = self._get_controller(field.name)
         if controller:
@@ -216,6 +261,10 @@ class Model(object, metaclass=ModelMeta):
         return self._data.get(key, default)
 
     def update(self, dictionary=None, **kargs):
+        '''
+        Update `model`'s data with `dictionary` updated with
+        `\*\*kargs`.
+        '''
         if not dictionary:
             dictionary = { }
 
@@ -246,6 +295,9 @@ class Model(object, metaclass=ModelMeta):
             self.set_direct(karg, kargs[karg])
 
     def validate(self):
+        '''
+        Validate the model. Raises an exception if an error is encountered.
+        '''
         self._check_missing(self._data)
 
         for field in self._fields:
@@ -345,6 +397,9 @@ class Model(object, metaclass=ModelMeta):
                         field.validated(value)
 
     def serialize(self, computed=False, reset=False):
+        '''
+        Serialize the model to a `dict` object.
+        '''
         obj = self._data.copy()
 
         for field in self._fields:

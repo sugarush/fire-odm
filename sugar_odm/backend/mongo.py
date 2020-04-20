@@ -11,6 +11,7 @@ from .. relationship import RelationshipMixin
 
 class MongoDB(object):
     '''
+    The MongoDB connection cache.
     '''
 
     connections = { }
@@ -45,6 +46,7 @@ class MongoDB(object):
 
 class MongoDBModel(Model, RelationshipMixin):
     '''
+    A MongoDB backed model.
     '''
 
     _connection = None

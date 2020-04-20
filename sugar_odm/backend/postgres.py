@@ -15,6 +15,7 @@ def convert_datetime(datetime):
 
 class PostgresDB(object):
     '''
+    The PostgreSQL connection cache.
     '''
 
     connections = { }
@@ -45,6 +46,7 @@ class PostgresDB(object):
 
 class PostgresDBModel(Model):
     '''
+    A PostgreSQL backed model.
     '''
 
     _pool = None

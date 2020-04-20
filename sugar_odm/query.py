@@ -7,6 +7,14 @@ def pop_modifiers(d):
 
 
 class Query(dict):
+    '''
+    The query class.
+
+    :param table: The name of the table to query against.
+    :param query: The JQL query.
+    :param limit: The number of records to limit to.
+    :param skip: The number of records to skip.
+    '''
 
     def __init__(self, table=None, query={ }, limit=100, skip=0):
         if not table:
@@ -17,6 +25,9 @@ class Query(dict):
         self.skip = skip
 
     def to_postgres(self):
+        '''
+        Converts the `query` object to a **PostgreSQL** statement.
+        '''
         query = f'SELECT data FROM {self.table} '
         arguments = [ ]
         count = 1
