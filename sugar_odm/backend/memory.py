@@ -26,6 +26,8 @@ def find(db, query={ }):
 
 
 class MemoryModel(Model):
+    '''
+    '''
 
     @classmethod
     def initialize(cls):

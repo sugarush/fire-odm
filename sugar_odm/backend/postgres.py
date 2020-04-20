@@ -14,6 +14,8 @@ def convert_datetime(datetime):
 
 
 class PostgresDB(object):
+    '''
+    '''
 
     connections = { }
     loop = None
@@ -42,6 +44,8 @@ class PostgresDB(object):
 
 
 class PostgresDBModel(Model):
+    '''
+    '''
 
     _pool = None
 

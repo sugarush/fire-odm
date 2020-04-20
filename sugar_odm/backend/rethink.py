@@ -8,6 +8,8 @@ from .. util import serialize
 
 
 class RethinkDB(object):
+    '''
+    '''
 
     connections = { }
 
@@ -30,6 +32,8 @@ class RethinkDB(object):
 
 
 class RethinkDBModel(Model):
+    '''
+    '''
 
     _connection = None
     _database = None

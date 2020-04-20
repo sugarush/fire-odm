@@ -10,6 +10,8 @@ from .. relationship import RelationshipMixin
 
 
 class MongoDB(object):
+    '''
+    '''
 
     connections = { }
     loop = None
@@ -42,6 +44,8 @@ class MongoDB(object):
 
 
 class MongoDBModel(Model, RelationshipMixin):
+    '''
+    '''
 
     _connection = None
     _database = None
