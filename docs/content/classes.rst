@@ -1,9 +1,6 @@
 Classes
 =======
 
-.. autoclass:: sugar_odm.ModelMeta
-  :members:
-
 .. autoclass:: sugar_odm.Model
   :members:
 
@@ -17,3 +14,4 @@ Classes
 .. autoclass:: sugar_odm.MongoDBModel
 .. autoclass:: sugar_odm.PostgresDBModel
 .. autoclass:: sugar_odm.RethinkDBModel
+.. autoclass:: sugar_odm.ModelMeta

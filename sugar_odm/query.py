@@ -8,10 +8,10 @@ def pop_modifiers(d):
 
 class Query(dict):
     '''
-    The query class.
+    The Query class.
 
     :param table: The name of the table to query against.
-    :param query: The JQL query.
+    :param query: The JSON query statement.
     :param limit: The number of records to limit to.
     :param skip: The number of records to skip.
     '''
