@@ -26,7 +26,7 @@ class Query(dict):
 
     def to_postgres(self):
         '''
-        Converts the `query` object to a **PostgreSQL** statement.
+        Converts the object to a **PostgreSQL** statement.
         '''
         query = f'SELECT data FROM {self.table} '
         arguments = [ ]
