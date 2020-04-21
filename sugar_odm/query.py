@@ -18,7 +18,7 @@ class Query(dict):
 
     def __init__(self, table=None, query={ }, limit=100, skip=0):
         if not table:
-            raise Exception('Both table must be specified.')
+            raise Exception('Table must be specified.')
         super(Query, self).__init__(query)
         self.table = table
         self.limit = limit
